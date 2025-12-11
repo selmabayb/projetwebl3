@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Mes statistiques</h2>
+<p>Total dépensé : {{ total_paid }} €</p>
+<p>Nombre d'interventions : {{ total_repairs }}</p>
+
+<h3>Factures</h3>
+<ul>
+{% for inv in invoices %}
+<li>Facture {{ inv.number }} — {{ inv.total }} € — {% if inv.paid %}Payée{% else %}Non payée{% endif %}</li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Dossiers - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-0">Mes Dossiers</h1>
+            <p class="text-secondary">Suivez vos demandes de réparation</p>
+        </div>
+        {% if is_client %}
+        <a href="{% url 'cases:case_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i> Nouveau Dossier
+        </a>
+        {% endif %}
+    </div>
+
+    {% if cases %}
+    <div class="row g-4">
+        {% for case in cases %}
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'cases:case_detail' case.pk %}" class="text-decoration-none text-dark">
+                <div
+                    class="glass-card h-100 p-4 border-start border-4 {% if case.status == 'NOUVEAU' %}border-primary{% elif case.status == 'EN_COURS' %}border-warning{% elif case.status == 'CLOTURE' %}border-success{% else %}border-secondary{% endif %} position-relative hover-lift">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span
+                            class="badge {% if case.status == 'NOUVEAU' %}bg-primary{% elif case.status == 'EN_COURS' %}bg-warning{% elif case.status == 'CLOTURE' %}bg-success{% else %}bg-secondary{% endif %} rounded-pill">
+                            {{ case.get_status_display }}
+                        </span>
+                        <small class="text-secondary"><i class="fa-regular fa-clock me-1"></i> {{ case.created_at|date:"d/m/Y" }}</small>
+                    </div>
+
+                    <h5 class="fw-bold mb-1">Dossier #{{ case.id }}</h5>
+                    <p class="text-secondary small fw-bold mb-3">
+                        <i class="fa-solid fa-car me-1"></i> {{ case.vehicle.brand }} {{ case.vehicle.model }}
+                    </p>
+
+                    <p class="text-muted small mb-0 text-truncate" style="height: 40px;">
+                        {{ case.description|default:"Aucune description" }}
+                    </p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+            style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-folder-open text-secondary fa-2x opacity-50"></i>
+        </div>
+        <h4>Aucun dossier</h4>
+        <p class="text-secondary mb-4">Vous n'avez pas encore de demande en cours.</p>
+        {% if is_client %}
+        <a href="{% url 'cases:case_create' %}" class="btn btn-primary rounded-pill px-4">
+            Déclarer un problème
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

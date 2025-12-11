@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Suggestions d’entretien pour {{ vehicle }}</h2>
+
+<ul>
+{% for s in suggestions %}
+    <li>{{ s }}</li>
+{% empty %}
+    <p>Aucune recommandation particulière.</p>
+{% endfor %}
+</ul>
+
+{% endblock %}

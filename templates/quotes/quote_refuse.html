@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Refuser le devis - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-card p-5">
+                <div class="text-center mb-4">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+                        style="width: 80px; height: 80px;">
+                        <i class="fa-solid fa-times fa-3x"></i>
+                    </div>
+                    <h3 class="fw-bold">Refuser le devis</h3>
+                    <p class="text-secondary">Dites-nous pourquoi vous refusez ce devis.</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Raison du refus</label>
+                        {{ form.reason }}
+                        {{ form.reason.errors }}
+                        <div class="form-text small">Cela nous aide à améliorer nos services.</div>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-danger fw-bold py-2 shadow-sm">
+                            Confirmer le refus
+                        </button>
+                        <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-light text-secondary">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('textarea').forEach(el => el.classList.add('form-control'));
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Devis {{ quote.quote_number }}</title>
+</head>
+<body>
+    <!-- En-tête -->
+    <div class="header">
+        <div class="garage-info">
+            <h1>{{ garage_name }}</h1>
+            <p>
+                {{ garage_address }}<br>
+                Tél: {{ garage_phone }}<br>
+                Email: {{ garage_email }}
+            </p>
+        </div>
+        <div class="quote-info">
+            <h2>DEVIS</h2>
+            <p>
+                <strong>N° {{ quote.quote_number }}</strong><br>
+                Date d'émission: {{ quote.created_at|date:"d/m/Y" }}<br>
+                Valable jusqu'au: {{ quote.validity_date|date:"d/m/Y" }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Informations client -->
+    <div class="client-info">
+        <h2>Client</h2>
+        <p>
+            <strong>{{ quote.case.client.get_full_name|default:quote.case.client.username }}</strong><br>
+            Email: {{ quote.case.client.email }}<br>
+            {% if quote.case.client.profile.phone %}
+            Téléphone: {{ quote.case.client.profile.phone }}<br>
+            {% endif %}
+        </p>
+        <p>
+            <strong>Véhicule:</strong> {{ quote.case.vehicle }}<br>
+            <strong>Dossier:</strong> #{{ quote.case.id }}
+        </p>
+    </div>
+
+    <!-- Description du problème -->
+    {% if quote.case.description %}
+    <div>
+        <h2>Description du problème</h2>
+        <p>{{ quote.case.description }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Détail du devis -->
+    <div>
+        <h2>Détail du devis</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Description</th>
+                    <th style="width: 15%;" class="text-right">Quantité</th>
+                    <th style="width: 15%;" class="text-right">Prix Unit. HT</th>
+                    <th style="width: 20%;" class="text-right">Total HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in lines %}
+                <tr>
+                    <td>{{ line.description }}</td>
+                    <td class="text-right">{{ line.quantity|floatformat:2 }}</td>
+                    <td class="text-right">{{ line.unit_price_ht|floatformat:2 }} €</td>
+                    <td class="text-right">{{ line.total_ht|floatformat:2 }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right">Total HT</td>
+                    <td class="text-right">{{ quote.total_ht|floatformat:2 }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-right">TVA ({% widthratio quote.vat_rate 1 100 %}%)</td>
+                    <td class="text-right">{{ quote.total_vat|floatformat:2 }} €</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" class="text-right"><strong>Total TTC</strong></td>
+                    <td class="text-right"><strong>{{ quote.total_ttc|floatformat:2 }} €</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Conditions -->
+    <div>
+        <h2>Conditions générales</h2>
+        <ul style="font-size: 9pt;">
+            <li>Ce devis est valable {{ quote.validity_date|timeuntil:quote.created_at }} à compter de la date d'émission.</li>
+            <li>Les travaux débuteront après acceptation du devis et confirmation du rendez-vous.</li>
+            <li>Le paiement est exigible à la fin des travaux.</li>
+            <li>Garantie des pièces et main d'œuvre selon les conditions légales en vigueur.</li>
+        </ul>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="footer">
+        <p>
+            {{ garage_name }} - {{ garage_address }}<br>
+            Tél: {{ garage_phone }} - Email: {{ garage_email }}
+        </p>
+        <p style="font-size: 8pt; margin-top: 10px;">
+            Document généré le {{ "now"|date:"d/m/Y à H:i" }}
+        </p>
+    </div>
+</body>
+</html>

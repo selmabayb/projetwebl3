@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Rendez-vous - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="fw-bold mb-0">{% if is_client %}Mes Rendez-vous{% else %}Tous les Rendez-vous{% endif %}</h1>
+        <p class="text-secondary">{% if is_client %}Gérez vos passages à l'atelier{% else %}Gérez les rendez-vous des clients{% endif %}</p>
+    </div>
+
+    <!-- Info Box: How to book? (CLIENT UNIQUEMENT) -->
+    {% if is_client %}
+    <div class="alert alert-info border-0 shadow-sm rounded-3 mb-5">
+        <div class="d-flex gap-3">
+            <div class="fs-4 text-info"><i class="fa-solid fa-circle-question"></i></div>
+            <div>
+                <h5 class="alert-heading fw-bold">Comment prendre rendez-vous ?</h5>
+                <p class="mb-2">Pour garantir un service de qualité, la prise de rendez-vous s'effectue en deux étapes :
+                </p>
+                <ol class="mb-3">
+                    <li>Vous créez un <strong>Dossier</strong> décrivant votre problème.</li>
+                    <li>Après validation du devis, vous pourrez choisir un créneau horaire.</li>
+                </ol>
+                <a href="{% url 'cases:case_create' %}" class="btn btn-primary btn-sm rounded-pill fw-bold">
+                    <i class="fa-solid fa-folder-plus me-2"></i> Ouvrir un nouveau dossier
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming -->
+    <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-calendar-check me-2"></i> À venir</h5>
+    {% if upcoming_appointments %}
+    <div class="row g-4 mb-5">
+        {% for apt in upcoming_appointments %}
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card p-4 border-top border-4 border-primary h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="text-center bg-light rounded-3 px-3 py-2">
+                        <span class="d-block fw-bold fs-4 text-primary">{{ apt.date|date:"d" }}</span>
+                        <small class="text-secondary text-uppercase">{{ apt.date|date:"M" }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-primary rounded-pill mb-1">{{ apt.start_time|time:"H:i" }}</span>
+                        <!-- Assuming apt.end_time exists or calculating duration -->
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-1">Entretien Atelier</h5>
+                {% if not is_client %}
+                <p class="small text-secondary mb-1">
+                    <strong>Client:</strong> {{ apt.case.client.get_full_name|default:apt.case.client.username }}
+                </p>
+                {% endif %}
+                <p class="small text-secondary mb-3">
+                    {{ apt.case.vehicle.brand }} {{ apt.case.vehicle.model }} ({{ apt.case.vehicle.get_identifier }})
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'appointments:appointment_detail' apt.pk %}"
+                        class="btn btn-outline-primary btn-sm">Détails</a>
+                    {% if is_client %}
+                    <form action="{% url 'appointments:appointment_cancel' apt.pk %}" method="post" class="d-grid">
+                        <!-- Assuming cancel is a post to a view or a link to a confirm page. View said it's a page. -->
+                        <a href="{% url 'appointments:appointment_cancel' apt.pk %}"
+                            class="btn btn-outline-danger btn-sm">Annuler</a>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-secondary italic mb-5">Aucun rendez-vous planifié.</p>
+    {% endif %}
+
+    <!-- Past -->
+    <h5 class="fw-bold text-secondary mb-3 opacity-75"><i class="fa-solid fa-history me-2"></i> Passés / Annulés</h5>
+    {% if past_appointments %}
+    <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+        {% for apt in past_appointments %}
+        <div class="list-group-item p-3 bg-light opacity-75">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="fw-bold {% if apt.is_cancelled %}text-decoration-line-through text-danger{% endif %}">
+                        {{ apt.date|date:"d F Y" }} à {{ apt.start_time|time:"H:i" }}
+                    </span>
+                    {% if apt.is_cancelled %}
+                    <span class="badge bg-danger ms-2">Annulé</span>
+                    {% else %}
+                    <span class="badge bg-secondary ms-2">Terminé</span>
+                    {% endif %}
+                    {% if not is_client %}
+                    <p class="small text-muted mb-0"><strong>Client:</strong> {{ apt.case.client.get_full_name|default:apt.case.client.username }}</p>
+                    {% endif %}
+                    <p class="small text-muted mb-0">{{ apt.case.vehicle.brand }} {{ apt.case.vehicle.model }}</p>
+                </div>
+                <a href="{% url 'appointments:appointment_detail' apt.pk %}"
+                    class="btn btn-sm btn-link text-secondary">Voir</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-secondary italic">Aucun historique.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container hero-content">
+        <h1 class="hero-title animate-in">L'Expertise Auto <br>Réinventée</h1>
+        <p class="lead text-light mb-5 opacity-75 fs-4" style="max-width: 600px; margin: 0 auto;">
+            Prenez rendez-vous, suivez vos réparations et gérez vos véhicules en toute simplicité.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-lg">
+                <i class="fa-solid fa-gauge me-2"></i> Mon Espace
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-lg">
+                Commencer
+            </a>
+            <a href="#services" class="btn btn-outline-light btn-lg rounded-pill px-5">
+                Nos Services
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Quick Stats / Trust Indicators -->
+<div class="container position-relative" style="margin-top: -5rem; z-index: 10;">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3"
+                    style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-clock fa-xl"></i>
+                </div>
+                <h5 class="fw-bold">Rendez-vous Rapide</h5>
+                <p class="text-secondary small mb-0">Réservez votre créneau en 2 minutes, 24/7.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-3"
+                    style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-euro-sign fa-xl"></i>
+                </div>
+                <h5 class="fw-bold">Transparence Totale</h5>
+                <p class="text-secondary small mb-0">Devis clairs et détaillés avant toute intervention.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3"
+                    style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-screwdriver-wrench fa-xl"></i>
+                </div>
+                <h5 class="fw-bold">Experts Certifiés</h5>
+                <p class="text-secondary small mb-0">Une équipe de mécaniciens qualifiés à votre service.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<section id="services" class="py-5 my-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h6 class="text-primary fw-bold text-uppercase letter-spacing-2">Ce que nous faisons</h6>
+            <h2 class="display-5 fw-bold mb-3">Nos Services</h2>
+            <p class="text-secondary">Une gamme complète de prestations pour votre véhicule.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Service 1 -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <img src="{% static 'img/maintenance.png' %}" class="card-img-top" alt="Maintenance"
+                        style="height: 160px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Entretien Général</h5>
+                        <p class="card-text text-secondary small">Vidange, filtres, niveaux. Maintenez votre auto en
+                            pleine forme.</p>
+                        <a href="#" class="btn btn-link text-primary p-0 text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#modalMaintenance">En savoir plus <i
+                                class="fa-solid fa-arrow-right small ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <img src="{% static 'img/brakes.png' %}" class="card-img-top" alt="Freinage"
+                        style="height: 160px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Freinage & Sécurité</h5>
+                        <p class="card-text text-secondary small">Disques, plaquettes, ABS. Votre sécurité est notre
+                            priorité.</p>
+                        <a href="#" class="btn btn-link text-primary p-0 text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#modalBrakes">En savoir plus <i
+                                class="fa-solid fa-arrow-right small ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <img src="{% static 'img/diagnostic.png' %}" class="card-img-top" alt="Diagnostic"
+                        style="height: 160px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Diagnostic Élec.</h5>
+                        <p class="card-text text-secondary small">Valise diagnostic, capteurs, batterie. On trouve la
+                            panne !</p>
+                        <a href="#" class="btn btn-link text-primary p-0 text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#modalDiag">En savoir plus <i
+                                class="fa-solid fa-arrow-right small ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <img src="{% static 'img/tires.png' %}" class="card-img-top" alt="Pneus"
+                        style="height: 160px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Pneumatiques</h5>
+                        <p class="card-text text-secondary small">Montage, équilibrage, parallélisme. Roulez tranquille.
+                        </p>
+                        <a href="#" class="btn btn-link text-primary p-0 text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#modalTires">En savoir plus <i
+                                class="fa-solid fa-arrow-right small ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="glass-card p-5 bg-gradient-primary text-white position-relative overflow-hidden"
+            style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));">
+            <div class="position-relative z-1 row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-3 text-white">Besoin d'une intervention urgente ?</h2>
+                    <p class="mb-lg-0 opacity-75">Nos mécaniciens sont prêts à intervenir. Consultez nos disponibilités
+                        en temps réel.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="{% url 'appointments:appointment_list' %}"
+                        class="btn btn-light text-primary rounded-pill px-5 fw-bold shadow">Prendre RDV</a>
+                </div>
+            </div>
+            <!-- Decor circle -->
+            <div class="position-absolute top-0 end-0 translate-middle-y rounded-circle bg-white opacity-10"
+                style="width: 300px; height: 300px; margin-right: -50px; margin-top: -50px;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Modals -->
+<!-- Maintenance Modal -->
+<div class="modal fade" id="modalMaintenance" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg bg-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Entretien Général</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/maintenance.png' %}" class="img-fluid rounded-3 mb-3 w-100"
+                    style="object-fit: cover; height: 200px;" alt="Maintenance">
+                <p>Notre forfait entretien général comprend une vérification complète de votre véhicule :</p>
+                <ul class="text-secondary small">
+                    <li>Vidange moteur avec huile de qualité premium</li>
+                    <li>Remplacement du filtre à huile</li>
+                    <li>Contrôle des niveaux (liquide de refroidissement, freins, lave-glace)</li>
+                    <li>Vérification de la pression des pneus</li>
+                    <li>Contrôle visuel des plaquettes et disques</li>
+                </ul>
+                <p class="mb-0 fw-bold text-primary">À partir de 89€</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-primary rounded-pill">Prendre RDV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Brakes Modal -->
+<div class="modal fade" id="modalBrakes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg bg-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Freinage & Sécurité</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/brakes.png' %}" class="img-fluid rounded-3 mb-3 w-100"
+                    style="object-fit: cover; height: 200px;" alt="Freinage">
+                <p>La sécurité n'a pas de prix. Nos experts vérifient et remplacent vos éléments de freinage :</p>
+                <ul class="text-secondary small">
+                    <li>Diagnostic complet du système de freinage</li>
+                    <li>Remplacement des plaquettes avant/arrière</li>
+                    <li>Remplacement des disques de frein</li>
+                    <li>Purge du liquide de frein</li>
+                    <li>Contrôle ABS et capteurs</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-primary rounded-pill">Prendre RDV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diagnostic Modal -->
+<div class="modal fade" id="modalDiag" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg bg-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Diagnostic Électronique</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/diagnostic.png' %}" class="img-fluid rounded-3 mb-3 w-100"
+                    style="object-fit: cover; height: 200px;" alt="Diagnostic">
+                <p>Un voyant allumé ? Une perte de puissance ? Nous identifions la panne rapidement :</p>
+                <ul class="text-secondary small">
+                    <li>Lecture des codes défauts avec valise multi-marques</li>
+                    <li>Test de la batterie et de l'alternateur</li>
+                    <li>Contrôle des capteurs et sondes</li>
+                    <li>Mise à jour des calculateurs</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-primary rounded-pill">Prendre RDV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tires Modal -->
+<div class="modal fade" id="modalTires" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg bg-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Pneumatiques</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/tires.png' %}" class="img-fluid rounded-3 mb-3 w-100"
+                    style="object-fit: cover; height: 200px;" alt="Pneus">
+                <p>Vos pneus sont votre seul contact avec la route. Ne les négligez pas :</p>
+                <ul class="text-secondary small">
+                    <li>Vente de pneus toutes marques et toutes saisons</li>
+                    <li>Montage et équilibrage de précision</li>
+                    <li>Réglage de la géométrie (parallélisme)</li>
+                    <li>Réparation de crevaison</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-primary rounded-pill">Prendre RDV</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

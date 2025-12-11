@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Valider le Devis - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4 text-warning">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i> Validation Finale
+                </h3>
+
+                <p class="mb-4">
+                    Vous êtes sur point d'émettre le devis <strong>{{ quote.quote_number }}</strong> pour un montant de
+                    <strong>{{ quote.total_amount_ttc }} € TTC</strong>.
+                </p>
+                <div class="alert alert-warning">
+                    Une fois validé :
+                    <ul class="mb-0">
+                        <li>Le devis sera envoyé au client par email.</li>
+                        <li>Il ne sera plus modifiable.</li>
+                        <li>Le statut du dossier passera à "Devis Émis".</li>
+                    </ul>
+                </div>
+
+                <div class="bg-light p-3 rounded mb-4">
+                    <h6 class="fw-bold">Aperçu rapide :</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li>Client : {{ quote.case.client.get_full_name }}</li>
+                        <li>Véhicule : {{ quote.case.vehicle }}</li>
+                        <li>Lignes : {{ quote.lines.count }}</li>
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.confirm }}
+                            <label class="form-check-label" for="{{ form.confirm.id_for_label }}">
+                                {{ form.confirm.label }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold py-2 shadow-sm text-dark">
+                            Valider et Envoyer
+                        </button>
+                        <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-light text-secondary">
+                            Retour
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Mettre à jour le statut - GaragePlus{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">Mise à jour Statut</h3>
+                <p class="text-secondary mb-4">
+                    Dossier #{{ case.id }} - {{ case.vehicle.brand }} {{ case.vehicle.model }}
+                </p>
+                <div class="alert alert-info small">
+                    Statut actuel : <strong>{{ case.get_status_display }}</strong>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Nouveau Statut</label>
+                        {{ form.status }}
+                        {{ form.status.errors }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Note (Historique)</label>
+                        {{ form.note }}
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm">
+                            Enregistrer
+                        </button>
+                        <a href="{% url 'cases:case_detail' case.pk %}" class="btn btn-light text-secondary">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('select, textarea').forEach(el => el.classList.add('form-control'));  
+</script>
+{% endblock %}

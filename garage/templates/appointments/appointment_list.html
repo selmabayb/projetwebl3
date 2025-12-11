@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Rendez-vous - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-calendar-check text-primary"></i>
+            {% if is_client %}Mes Rendez-vous{% else %}Tous les Rendez-vous{% endif %}
+        </h1>
+        <p class="text-muted">Gestion des rendez-vous de réparation</p>
+    </div>
+</div>
+
+<!-- Rendez-vous à venir -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-calendar-event"></i> Rendez-vous à venir ({{ upcoming_appointments.count }})
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if upcoming_appointments %}
+            <div class="list-group">
+                {% for appointment in upcoming_appointments %}
+                <a href="{% url 'appointments:appointment_detail' appointment.pk %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">
+                                <i class="bi bi-calendar3"></i> {{ appointment.date|date:"l d F Y" }}
+                                à {{ appointment.start_time|time:"H:i" }}
+                            </h6>
+                            {% if not is_client %}
+                                <p class="mb-1">
+                                    <strong>Client:</strong> {{ appointment.case.client.get_full_name|default:appointment.case.client.username }}
+                                </p>
+                            {% endif %}
+                            <p class="mb-1">
+                                <strong>Dossier:</strong> <a href="{% url 'cases:case_detail' appointment.case.pk %}">#{{ appointment.case.id }}</a> - {{ appointment.case.vehicle }}
+                            </p>
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> Durée: {{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}
+                            </small>
+                        </div>
+                        <div>
+                            <span class="badge bg-success">Confirmé</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">Aucun rendez-vous à venir.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Rendez-vous passés et annulés -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-clock-history"></i> Historique ({{ past_appointments.count }})
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if past_appointments %}
+            <div class="list-group">
+                {% for appointment in past_appointments %}
+                <a href="{% url 'appointments:appointment_detail' appointment.pk %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">
+                                <i class="bi bi-calendar3"></i> {{ appointment.date|date:"d/m/Y" }}
+                                à {{ appointment.start_time|time:"H:i" }}
+                            </h6>
+                            {% if not is_client %}
+                                <p class="mb-1">
+                                    <strong>Client:</strong> {{ appointment.case.client.get_full_name|default:appointment.case.client.username }}
+                                </p>
+                            {% endif %}
+                            <p class="mb-1">
+                                <strong>Dossier:</strong> #{{ appointment.case.id }} - {{ appointment.case.vehicle }}
+                            </p>
+                            {% if appointment.is_cancelled %}
+                                <small class="text-muted">
+                                    Annulé le {{ appointment.cancellation_date|date:"d/m/Y" }}
+                                </small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if appointment.is_cancelled %}
+                                <span class="badge bg-danger">Annulé</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Passé</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">Aucun historique.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

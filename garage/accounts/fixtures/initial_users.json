@@ -1,0 +1,118 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "email": "admin@garage.com",
+      "password": "pbkdf2_sha256$600000$JH3xZqP3kY8N2z$vT4C8FGh5KlMnOpQrStUvWxYz+1234567890ABCDEF=",
+      "first_name": "Administrateur",
+      "last_name": "Système",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "gestionnaire",
+      "email": "gestionnaire@garage.com",
+      "password": "pbkdf2_sha256$600000$JH3xZqP3kY8N2z$vT4C8FGh5KlMnOpQrStUvWxYz+1234567890ABCDEF=",
+      "first_name": "Marie",
+      "last_name": "Dupont",
+      "is_staff": true,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-02T10:00:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "client1",
+      "email": "client1@example.com",
+      "password": "pbkdf2_sha256$600000$JH3xZqP3kY8N2z$vT4C8FGh5KlMnOpQrStUvWxYz+1234567890ABCDEF=",
+      "first_name": "Jean",
+      "last_name": "Martin",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-10T14:30:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "username": "client2",
+      "email": "client2@example.com",
+      "password": "pbkdf2_sha256$600000$JH3xZqP3kY8N2z$vT4C8FGh5KlMnOpQrStUvWxYz+1234567890ABCDEF=",
+      "first_name": "Sophie",
+      "last_name": "Bernard",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2024-01-15T09:15:00Z"
+    }
+  },
+  {
+    "model": "accounts.userprofile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "role": "ADMIN",
+      "phone_number": "0601020304",
+      "address": "1 Rue du Garage, 75001 Paris",
+      "failed_login_attempts": 0,
+      "account_locked_until": null,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.userprofile",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "role": "GESTIONNAIRE",
+      "phone_number": "0602030405",
+      "address": "2 Avenue des Mécaniciens, 75002 Paris",
+      "failed_login_attempts": 0,
+      "account_locked_until": null,
+      "created_at": "2024-01-02T10:00:00Z",
+      "updated_at": "2024-01-02T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.userprofile",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "role": "CLIENT",
+      "phone_number": "0612345678",
+      "address": "10 Rue de la République, 75010 Paris",
+      "failed_login_attempts": 0,
+      "account_locked_until": null,
+      "created_at": "2024-01-10T14:30:00Z",
+      "updated_at": "2024-01-10T14:30:00Z"
+    }
+  },
+  {
+    "model": "accounts.userprofile",
+    "pk": 4,
+    "fields": {
+      "user": 4,
+      "role": "CLIENT",
+      "phone_number": "0687654321",
+      "address": "25 Boulevard Victor Hugo, 75015 Paris",
+      "failed_login_attempts": 0,
+      "account_locked_until": null,
+      "created_at": "2024-01-15T09:15:00Z",
+      "updated_at": "2024-01-15T09:15:00Z"
+    }
+  }
+]

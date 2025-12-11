@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Facture #{{ invoice.pk }}{% endblock %}
+
+{% block content %}
+<header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gray-900">
+                📄 Facture #{{ invoice.pk }}
+            </h1>
+            <a href="{% url 'invoice_print' invoice.pk %}" target="_blank" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition duration-150">
+                Imprimer / PDF
+            </a>
+        </div>
+        <p class="mt-1 text-lg text-gray-500">
+            Véhicule : {{ invoice.case.vehicle.brand }} {{ invoice.case.vehicle.model }} ({{ invoice.case.vehicle.plate }})
+        </p>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {# COLONNE 1: Paiement et Récapitulatif #}
+        <div class="lg:col-span-1 space-y-8">
+            
+            {# Bloc de Paiement #}
+            <div class="bg-white shadow-xl rounded-xl p-6 border-l-4 
+                 {% if invoice.paid %}border-green-600{% else %}border-red-600{% endif %}">
+                
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Statut du Paiement</h3>
+                
+                {% if invoice.paid %}
+                    <p class="text-2xl font-bold text-green-700">PAYÉE</p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Date de paiement : {{ invoice.paid_at|date:"d M Y à H:i" }}
+                    </p>
+                {% else %}
+                    <p class="text-2xl font-bold text-red-700">IMPAYÉE</p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Date limite : {{ invoice.due_date|date:"d M Y" }}
+                    </p>
+                    <div class="mt-6">
+                        <a href="{% url 'payment_start_invoice' invoice.pk %}" class="block text-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
+                            Payer {{ invoice.total_ttc|floatformat:2 }} €
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {# Bloc Récapitulatif #}
+            <div class="bg-white shadow-xl rounded-xl p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Montant Total</h3>
+                
+                <dl class="space-y-4 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-gray-600">Sous-total (HT) :</dt>
+                        <dd class="font-medium text-gray-800">{{ invoice.total_ht|floatformat:2 }} €</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-600">TVA ({{ invoice.vat_rate|floatformat:0 }}%) :</dt>
+                        <dd class="font-medium text-gray-800">{{ invoice.vat_amount|floatformat:2 }} €</dd>
+                    </div>
+                    <div class="flex justify-between border-t border-indigo-200 pt-4">
+                        <dt class="text-xl font-extrabold text-indigo-700">TOTAL TTC :</dt>
+                        <dd class="text-xl font-extrabold text-indigo-900">{{ invoice.total_ttc|floatformat:2 }} €</dd>
+                    </div>
+                </dl>
+            </div>
+            
+        </div>
+        
+        {# COLONNES 2 & 3: Détails des Lignes #}
+        <div class="lg:col-span-2">
+            <div class="bg-white shadow-xl rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Détails des Articles</h3>
+                </div>
+                
+                <ul role="list" class="divide-y divide-gray-100">
+                    {% for item in invoice.items.all %}
+                    <li class="px-6 py-4 flex justify-between items-start hover:bg-gray-50 transition duration-100">
+                        <div class="flex-1 min-w-0 pr-4">
+                            <p class="text-base font-medium text-gray-900">{{ item.description }}</p>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Prix unitaire HT : {{ item.unit_price|floatformat:2 }} € x {{ item.quantity }}
+                            </p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0 text-right">
+                            <p class="text-lg font-bold text-gray-800">{{ item.total_ht|floatformat:2 }} € HT</p>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <p class="p-6 text-center text-gray-500 italic">Aucun détail d'article sur cette facture.</p>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="mt-8 bg-white shadow-xl rounded-xl p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Notes</h3>
+                <p class="text-sm text-gray-500">
+                    {% if invoice.notes %}
+                        {{ invoice.notes }}
+                    {% else %}
+                        Merci pour votre confiance. En cas de questions, veuillez nous contacter rapidement.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        
+    </div>
+</main>
+{% endblock %}

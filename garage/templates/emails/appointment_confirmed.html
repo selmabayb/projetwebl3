@@ -1,0 +1,37 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>✅ Confirmation de votre rendez-vous</h2>
+
+<p>Bonjour {{ client.get_full_name|default:client.username }},</p>
+
+<p>Votre rendez-vous a bien été enregistré. Nous vous attendons à la date et l'heure suivantes :</p>
+
+<div class="info-box">
+    <strong>📅 Date :</strong> {{ appointment.date|date:"l d F Y" }}<br>
+    <strong>🕐 Heure :</strong> {{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}<br>
+    <strong>🚗 Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>📋 Dossier :</strong> #{{ case.id }}
+</div>
+
+<p><strong>Adresse du garage :</strong><br>
+123 Rue de l'Automobile<br>
+75000 Paris</p>
+
+<p><strong>Important :</strong></p>
+<ul>
+    <li>Merci d'arriver 10 minutes avant l'heure du rendez-vous</li>
+    <li>Pensez à apporter vos papiers du véhicule</li>
+    <li>Si vous devez modifier ou annuler ce rendez-vous, faites-le au moins 24h à l'avance</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/appointments/{{ appointment.pk }}/" class="button">
+        Voir mon rendez-vous
+    </a>
+</p>
+
+<p>Nous vous enverrons un rappel 24h avant votre rendez-vous.</p>
+
+<p>À bientôt,<br>L'équipe du Garage Auto</p>
+{% endblock %}

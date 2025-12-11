@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ vehicle.get_identifier }} - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'vehicles:vehicle_list' %}">Mes Véhicules</a></li>
+                <li class="breadcrumb-item active">{{ vehicle.get_identifier }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-car-front text-primary"></i> {{ vehicle.get_identifier }}
+        </h1>
+        <p class="text-muted">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'vehicles:vehicle_update' vehicle.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        {% if vehicle.is_active %}
+            <a href="{% url 'vehicles:vehicle_delete' vehicle.pk %}" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Désactiver
+            </a>
+        {% else %}
+            <form method="post" action="{% url 'vehicles:vehicle_activate' vehicle.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="bi bi-check-circle"></i> Réactiver
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if not vehicle.is_active %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle"></i> Ce véhicule est actuellement <strong>désactivé</strong>.
+</div>
+{% endif %}
+
+<!-- Vehicle Information -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> Informations générales</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width: 40%;">Marque</th>
+                        <td>{{ vehicle.brand }}</td>
+                    </tr>
+                    <tr>
+                        <th>Modèle</th>
+                        <td>{{ vehicle.model }}</td>
+                    </tr>
+                    <tr>
+                        <th>Année</th>
+                        <td>{{ vehicle.year }}</td>
+                    </tr>
+                    <tr>
+                        <th>Immatriculation</th>
+                        <td>{{ vehicle.plate_number|default:"<em>Non renseignée</em>" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Surnom</th>
+                        <td>{{ vehicle.nickname|default:"<em>Aucun</em>" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Kilométrage</th>
+                        <td>{{ vehicle.mileage|default:"Non renseigné" }} km</td>
+                    </tr>
+                    <tr>
+                        <th>Carburant</th>
+                        <td>{{ vehicle.get_fuel_type_display }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-shield-check"></i> Contrôles & Assurance</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width: 50%;">Dernier contrôle technique</th>
+                        <td>
+                            {% if vehicle.last_technical_inspection %}
+                                {{ vehicle.last_technical_inspection|date:"d/m/Y" }}
+                            {% else %}
+                                <em>Non renseigné</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Compagnie d'assurance</th>
+                        <td>{{ vehicle.insurance_company|default:"<em>Non renseignée</em>" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date d'expiration assurance</th>
+                        <td>
+                            {% if vehicle.insurance_expiry_date %}
+                                {{ vehicle.insurance_expiry_date|date:"d/m/Y" }}
+                            {% else %}
+                                <em>Non renseignée</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        {% if vehicle.notes %}
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-sticky"></i> Notes</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ vehicle.notes }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Vehicle History -->
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="card-title mb-0"><i class="bi bi-clock-history"></i> Historique du véhicule</h5>
+    </div>
+    <div class="card-body">
+        {% if history %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Date</th>
+                            <th style="width: 15%;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in history %}
+                        <tr>
+                            <td>{{ event.event_date|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if event.event_type == 'CREATE' %}
+                                    <span class="badge bg-success">Création</span>
+                                {% elif event.event_type == 'UPDATE' %}
+                                    <span class="badge bg-info">Mise à jour</span>
+                                {% elif event.event_type == 'DELETE' %}
+                                    <span class="badge bg-danger">Désactivation</span>
+                                {% elif event.event_type == 'REPAIR' %}
+                                    <span class="badge bg-warning">Réparation</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ event.get_event_type_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ event.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">
+                <i class="bi bi-info-circle"></i> Aucun événement enregistré pour ce véhicule.
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+</div>
+{% endblock %}

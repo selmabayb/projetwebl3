@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter des pannes - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">
+                    <i class="fa-solid fa-clipboard-list text-primary me-2"></i> Préciser les pannes
+                </h3>
+                <p class="text-secondary mb-4">Si vous connaissez l'origine du problème, sélectionnez-le dans la liste
+                    ci-dessous. Sinon, passez cette étape.</p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary mb-3">Sélectionnez les pannes
+                            probables</label>
+
+                        <div class="accordion" id="faultsAccordion">
+                            {% for group in fault_groups %}
+                            <div class="accordion-item border-0 mb-2 shadow-sm rounded-3 overflow-hidden">
+                                <h2 class="accordion-header" id="heading{{ group.id }}">
+                                    <button class="accordion-button collapsed fw-bold bg-light text-primary"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ group.id }}"
+                                        aria-expanded="false" aria-controls="collapse{{ group.id }}">
+                                        {{ group.name }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ group.id }}" class="accordion-collapse collapse"
+                                    aria-labelledby="heading{{ group.id }}" data-bs-parent="#faultsAccordion">
+                                    <div class="accordion-body bg-white">
+                                        <div class="list-group list-group-flush">
+                                            {% for fault in group.faults.all %}
+                                            <label class="list-group-item d-flex gap-3 align-items-start border-0">
+                                                <input class="form-check-input flex-shrink-0" type="checkbox"
+                                                    name="faults" value="{{ fault.id }}" {% if fault in selected_faults %}checked{% endif %} style="width: 1.2em; height: 1.2em;">
+                                                <span>
+                                                    <span class="d-block fw-bold text-dark">{{ fault.name }}</span>
+                                                    {% if fault.description %}
+                                                    <span class="d-block small text-secondary">{{ fault.description }}</span>
+                                                    {% endif %}
+                                                </span>
+                                            </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if form.faults.errors %}
+                        <div class="alert alert-danger mt-3">
+                            {{ form.faults.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{% url 'cases:case_detail' case.pk %}"
+                            class="btn btn-outline-secondary rounded-pill px-4">
+                            Passer cette étape
+                        </a>
+                        <button type="submit" name="action" value="finish"
+                            class="btn btn-primary fw-bold px-4 shadow-sm rounded-pill">
+                            Valider la sélection <i class="fa-solid fa-check ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

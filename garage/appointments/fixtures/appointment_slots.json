@@ -1,0 +1,422 @@
+[
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 1,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "09:00:00",
+      "end_time": "10:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 2,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "10:00:00",
+      "end_time": "11:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 3,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "11:00:00",
+      "end_time": "12:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 4,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 5,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "15:00:00",
+      "end_time": "16:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 6,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 0,
+      "date": null,
+      "start_time": "16:00:00",
+      "end_time": "17:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 7,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "09:00:00",
+      "end_time": "10:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 8,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "10:00:00",
+      "end_time": "11:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 9,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "11:00:00",
+      "end_time": "12:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 10,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 11,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "15:00:00",
+      "end_time": "16:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 12,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 1,
+      "date": null,
+      "start_time": "16:00:00",
+      "end_time": "17:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 13,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "09:00:00",
+      "end_time": "10:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 14,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "10:00:00",
+      "end_time": "11:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 15,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "11:00:00",
+      "end_time": "12:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 16,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 17,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "15:00:00",
+      "end_time": "16:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 18,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 2,
+      "date": null,
+      "start_time": "16:00:00",
+      "end_time": "17:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 19,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "09:00:00",
+      "end_time": "10:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 20,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "10:00:00",
+      "end_time": "11:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 21,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "11:00:00",
+      "end_time": "12:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 22,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 23,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "15:00:00",
+      "end_time": "16:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 24,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 3,
+      "date": null,
+      "start_time": "16:00:00",
+      "end_time": "17:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 25,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "09:00:00",
+      "end_time": "10:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 26,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "10:00:00",
+      "end_time": "11:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 27,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "11:00:00",
+      "end_time": "12:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 28,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 29,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "15:00:00",
+      "end_time": "16:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "appointments.appointmentslot",
+    "pk": 30,
+    "fields": {
+      "is_recurring": true,
+      "is_exception": false,
+      "weekday": 4,
+      "date": null,
+      "start_time": "16:00:00",
+      "end_time": "17:00:00",
+      "is_available": true,
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  }
+]

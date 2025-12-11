@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Facture {{ invoice.number }}</h2>
+<hr>
+{% for l in lines %}
+<p>{{ l.label }} — {{ l.qty }} × {{ l.price }} €</p>
+{% endfor %}
+<p><strong>Total : {{ invoice.total }} €</strong></p>
+</body>
+</html>

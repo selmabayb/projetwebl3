@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Véhicules - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-car-front text-primary"></i> Mes Véhicules
+        </h1>
+        <p class="text-muted">Gérez vos véhicules et consultez leur historique</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Ajouter un véhicule
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-check-circle text-success"></i> Véhicules actifs
+                </h5>
+                <h2 class="card-text">{{ active_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-collection"></i> Total
+                </h5>
+                <h2 class="card-text">{{ total_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search/Filter Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-search"></i> Rechercher</h5>
+        <form method="get" action="{% url 'vehicles:vehicle_list' %}">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    {{ form.search }}
+                </div>
+                <div class="col-md-3">
+                    {{ form.fuel_type }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.is_active }}
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Vehicles List -->
+{% if vehicles %}
+    <div class="row">
+        {% for vehicle in vehicles %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 {% if not vehicle.is_active %}border-secondary{% endif %}">
+                    <div class="card-header {% if vehicle.is_active %}bg-primary text-white{% else %}bg-secondary text-white{% endif %}">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-car-front"></i>
+                            {{ vehicle.get_identifier }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2">{{ vehicle.brand }} {{ vehicle.model }}</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-calendar"></i> <strong>Année:</strong> {{ vehicle.year }}</li>
+                            <li><i class="bi bi-speedometer"></i> <strong>Kilométrage:</strong> {{ vehicle.mileage|default:"-" }} km</li>
+                            <li><i class="bi bi-fuel-pump"></i> <strong>Carburant:</strong> {{ vehicle.get_fuel_type_display }}</li>
+                            {% if not vehicle.is_active %}
+                                <li class="text-danger"><i class="bi bi-x-circle"></i> <strong>Inactif</strong></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'vehicles:vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Voir
+                            </a>
+                            <a href="{% url 'vehicles:vehicle_update' vehicle.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            {% if vehicle.is_active %}
+                                <a href="{% url 'vehicles:vehicle_delete' vehicle.pk %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        {% if request.GET %}
+            Aucun véhicule ne correspond à votre recherche.
+            <a href="{% url 'vehicles:vehicle_list' %}" class="alert-link">Réinitialiser les filtres</a>
+        {% else %}
+            Vous n'avez pas encore enregistré de véhicule.
+            <a href="{% url 'vehicles:vehicle_create' %}" class="alert-link">Ajouter votre premier véhicule</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

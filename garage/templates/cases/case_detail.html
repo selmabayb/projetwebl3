@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}Dossier #{{ case.id }} - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cases:case_list' %}">
+                    {% if is_client %}Mes Dossiers{% else %}Tous les Dossiers{% endif %}
+                </a></li>
+                <li class="breadcrumb-item active">Dossier #{{ case.id }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-folder text-primary"></i> Dossier #{{ case.id }}
+        </h1>
+        <p class="text-muted">{{ case.vehicle }}</p>
+    </div>
+    <div class="col-auto">
+        {% if can_add_faults %}
+            <a href="{% url 'cases:case_add_faults' case.pk %}" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle"></i> Ajouter des pannes
+            </a>
+        {% endif %}
+        {% if not is_client %}
+            <a href="{% url 'cases:case_update_status' case.pk %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-repeat"></i> Modifier le statut
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Informations principales -->
+<div class="row">
+    <div class="col-md-8">
+        <!-- Statut et urgence -->
+        <div class="card mb-4">
+            <div class="card-header
+                {% if case.status == 'NOUVEAU' %}bg-info text-white
+                {% elif case.status == 'DEVIS_EMIS' %}bg-warning
+                {% elif case.status == 'DEVIS_ACCEPTE' or case.status == 'RDV_CONFIRME' %}bg-success text-white
+                {% elif case.status == 'EN_COURS' %}bg-primary text-white
+                {% elif case.status == 'PRET' %}bg-success text-white
+                {% elif case.status == 'CLOTURE' %}bg-secondary text-white
+                {% elif case.status == 'DEVIS_REFUSE' or case.status == 'EXPIRE' %}bg-danger text-white
+                {% endif %}">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-flag"></i> Statut : {{ case.get_status_display }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width: 30%;">Urgence</th>
+                        <td>
+                            {% if case.urgency_level == 'HAUTE' %}
+                                <span class="badge bg-danger">Haute</span>
+                            {% elif case.urgency_level == 'NORMALE' %}
+                                <span class="badge bg-warning text-dark">Normale</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Basse</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date de création</th>
+                        <td>{{ case.created_at|date:"d/m/Y à H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Dernière mise à jour</th>
+                        <td>{{ case.updated_at|date:"d/m/Y à H:i" }}</td>
+                    </tr>
+                    {% if not is_client %}
+                    <tr>
+                        <th>Client</th>
+                        <td>{{ case.client.get_full_name|default:case.client.username }} ({{ case.client.email }})</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <!-- Description du problème -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-file-text"></i> Description du problème</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ case.description }}</p>
+            </div>
+        </div>
+
+        <!-- Pannes sélectionnées -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-wrench"></i> Pannes sélectionnées ({{ case_faults.count }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if case_faults %}
+                    <div class="list-group">
+                        {% for fault in case_faults %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ fault.group.name }} - {{ fault.name }}</h6>
+                            </div>
+                            <p class="mb-1 text-muted">{{ fault.description }}</p>
+                            <small class="text-primary">
+                                <i class="bi bi-clock"></i> {{ fault.labor_hours }}h de main d'œuvre
+                                • <i class="bi bi-currency-euro"></i> {{ fault.parts_cost }}€ de pièces
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> Aucune panne sélectionnée pour ce dossier.
+                        {% if can_add_faults %}
+                            <a href="{% url 'cases:case_add_faults' case.pk %}" class="alert-link">Ajouter des pannes</a>
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Historique des changements de statut -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-clock-history"></i> Historique du dossier</h5>
+            </div>
+            <div class="card-body">
+                {% if status_history %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">Date</th>
+                                    <th style="width: 25%;">Ancien statut</th>
+                                    <th style="width: 25%;">Nouveau statut</th>
+                                    <th style="width: 30%;">Modifié par</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in status_history %}
+                                <tr>
+                                    <td>{{ log.changed_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if log.old_status %}
+                                            <span class="badge bg-secondary">{{ log.get_old_status_display }}</span>
+                                        {% else %}
+                                            <em>-</em>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="badge bg-info">{{ log.get_new_status_display }}</span></td>
+                                    <td>{{ log.changed_by.get_full_name|default:log.changed_by.username }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> Aucun historique pour ce dossier.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="col-md-4">
+        <!-- Véhicule -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-car-front"></i> Véhicule</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">{{ case.vehicle.get_identifier }}</h6>
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Marque:</strong> {{ case.vehicle.brand }}</li>
+                    <li><strong>Modèle:</strong> {{ case.vehicle.model }}</li>
+                    <li><strong>Année:</strong> {{ case.vehicle.year }}</li>
+                    <li><strong>Kilométrage:</strong> {{ case.vehicle.mileage|default:"-" }} km</li>
+                </ul>
+                <a href="{% url 'vehicles:vehicle_detail' case.vehicle.pk %}" class="btn btn-sm btn-outline-primary mt-2 w-100">
+                    <i class="bi bi-eye"></i> Voir le véhicule
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        {% if case.status == 'DEVIS_EMIS' and is_client %}
+        <div class="card border-warning mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="card-title mb-0"><i class="bi bi-exclamation-triangle"></i> Action requise</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Un devis a été émis pour ce dossier. Vous devez l'accepter ou le refuser.</p>
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Accepter le devis
+                    </a>
+                    <a href="#" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Refuser le devis
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if case.status == 'DEVIS_ACCEPTE' and is_client %}
+        <div class="card border-success mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-calendar-check"></i> Prochaine étape</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Votre devis a été accepté. Réservez maintenant un rendez-vous pour la réparation.</p>
+                <a href="#" class="btn btn-success w-100">
+                    <i class="bi bi-calendar-plus"></i> Réserver un RDV
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'cases:case_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+</div>
+{% endblock %}

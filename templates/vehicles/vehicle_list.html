@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Véhicules - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-0">Mes Véhicules</h1>
+            <p class="text-secondary">Gérez votre parc automobile</p>
+        </div>
+        <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i> Ajouter un véhicule
+        </a>
+    </div>
+
+    {% if vehicles %}
+    <div class="row g-4">
+        {% for vehicle in vehicles %}
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card h-100 p-4 position-relative">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-car fa-lg"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-secondary p-0" type="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg">
+                            <li><a class="dropdown-item" href="{% url 'vehicles:vehicle_update' vehicle.pk %}"><i
+                                        class="fa-solid fa-pen me-2"></i> Modifier</a></li>
+                            <li>
+                                <form action="{% url 'vehicles:vehicle_delete' vehicle.pk %}" method="post"
+                                    class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger"
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')">
+                                        <i class="fa-solid fa-trash me-2"></i> Supprimer
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-1">{{ vehicle.brand }} {{ vehicle.model }}</h5>
+                <p class="text-secondary small mb-3">
+                    {% if vehicle.plate_number %}
+                    {{ vehicle.plate_number }}
+                    {% else %}
+                    {{ vehicle.nickname }}
+                    {% endif %}
+                </p>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-light">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-gauge text-secondary fa-sm"></i>
+                        <span class="small fw-bold">{{ vehicle.mileage }} km</span>
+                    </div>
+                    <span class="badge bg-light text-dark border">{{ vehicle.year }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+            style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-car text-secondary fa-2x opacity-50"></i>
+        </div>
+        <h4>Aucun véhicule</h4>
+        <p class="text-secondary mb-4">Vous n'avez pas encore ajouté de véhicule.</p>
+        <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary rounded-pill px-4">
+            Ajouter mon premier véhicule
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

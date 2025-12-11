@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Rendez-vous du {{ appointment.date|date:"d/m/Y" }} - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'appointments:appointment_list' %}">
+                    {% if is_client %}Mes Rendez-vous{% else %}Tous les Rendez-vous{% endif %}
+                </a></li>
+                <li class="breadcrumb-item active">RDV du {{ appointment.date|date:"d/m/Y" }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-calendar-check text-primary"></i>
+            Rendez-vous
+        </h1>
+        <p class="text-muted">{{ appointment.date|date:"l d F Y" }} à {{ appointment.start_time|time:"H:i" }}</p>
+    </div>
+    <div class="col-auto">
+        {% if is_client and can_modify %}
+            <a href="{% url 'appointments:appointment_modify' appointment.pk %}" class="btn btn-outline-primary">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a href="{% url 'appointments:appointment_cancel' appointment.pk %}" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle"></i> Annuler
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Informations principales -->
+<div class="row">
+    <div class="col-md-8">
+        <!-- Détails du rendez-vous -->
+        <div class="card mb-4 {% if appointment.is_cancelled %}border-danger{% else %}border-success{% endif %}">
+            <div class="card-header {% if appointment.is_cancelled %}bg-danger text-white{% else %}bg-success text-white{% endif %}">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> Détails du rendez-vous
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width: 30%;">Date</th>
+                        <td>{{ appointment.date|date:"l d F Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Heure de début</th>
+                        <td>{{ appointment.start_time|time:"H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Heure de fin</th>
+                        <td>{{ appointment.end_time|time:"H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Durée</th>
+                        <td>
+                            {% widthratio appointment.end_time.hour 1 60 %}{% widthratio appointment.end_time.minute 1 1 %}
+                            minutes
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Statut</th>
+                        <td>
+                            {% if appointment.is_cancelled %}
+                                <span class="badge bg-danger">Annulé</span>
+                            {% else %}
+                                <span class="badge bg-success">Confirmé</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date de réservation</th>
+                        <td>{{ appointment.created_at|date:"d/m/Y à H:i" }}</td>
+                    </tr>
+                    {% if not is_client %}
+                    <tr>
+                        <th>Client</th>
+                        <td>
+                            {{ appointment.case.client.get_full_name|default:appointment.case.client.username }}
+                            ({{ appointment.case.client.email }})
+                        </td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+                {% if appointment.is_cancelled %}
+                    <hr>
+                    <div class="alert alert-danger mb-0">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Rendez-vous annulé</h6>
+                        <p class="mb-1"><strong>Date d'annulation:</strong> {{ appointment.cancellation_date|date:"d/m/Y à H:i" }}</p>
+                        {% if appointment.cancellation_reason %}
+                            <p class="mb-0"><strong>Motif:</strong> {{ appointment.cancellation_reason }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Dossier associé -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-folder"></i> Dossier associé
+                </h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Dossier:</strong> <a href="{% url 'cases:case_detail' appointment.case.pk %}">#{{ appointment.case.id }}</a></p>
+                <p><strong>Véhicule:</strong> {{ appointment.case.vehicle }}</p>
+                <p><strong>Statut du dossier:</strong> <span class="badge bg-info">{{ appointment.case.get_status_display }}</span></p>
+                <p class="mb-0"><strong>Description:</strong> {{ appointment.case.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="col-md-4">
+        <!-- Véhicule -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-car-front"></i> Véhicule
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">{{ appointment.case.vehicle.get_identifier }}</h6>
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Marque:</strong> {{ appointment.case.vehicle.brand }}</li>
+                    <li><strong>Modèle:</strong> {{ appointment.case.vehicle.model }}</li>
+                    <li><strong>Année:</strong> {{ appointment.case.vehicle.year }}</li>
+                    <li><strong>Kilométrage:</strong> {{ appointment.case.vehicle.mileage|default:"-" }} km</li>
+                </ul>
+                <a href="{% url 'vehicles:vehicle_detail' appointment.case.vehicle.pk %}" class="btn btn-sm btn-outline-primary mt-2 w-100">
+                    <i class="bi bi-eye"></i> Voir le véhicule
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        {% if is_client and not appointment.is_cancelled %}
+            {% if can_modify %}
+            <div class="card border-warning mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-tools"></i> Modifier le RDV
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Vous pouvez modifier ou annuler ce rendez-vous jusqu'à 24h avant l'heure prévue.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'appointments:appointment_modify' appointment.pk %}" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Modifier le RDV
+                        </a>
+                        <a href="{% url 'appointments:appointment_cancel' appointment.pk %}" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Annuler le RDV
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Modification impossible</strong><br>
+                Ce rendez-vous ne peut plus être modifié (moins de 24h avant).
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'appointments:appointment_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+</div>
+{% endblock %}

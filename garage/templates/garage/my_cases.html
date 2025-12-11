@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mes Dossiers de Réparation{% endblock %}
+
+{% block content %}
+<header class="bg-gray-50 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-extrabold text-gray-900">
+            📂 Suivi de mes Dossiers
+        </h1>
+        <p class="mt-2 text-xl text-gray-500">Visualisez l'état de vos réparations en un coup d'œil.</p>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="space-y-8">
+        {% if cases %}
+            {% for case in cases %}
+                {# Détermination des variables de style en utilisant uniquement IF/ELIF #}
+                {% if case.status == 'QUOTE_SENT' %}
+                    {% with status_class='border-amber-500' status_text='Devis en Attente' icon_class='text-amber-500' %}
+                    {% endwith %}
+                {% elif case.status == 'QUOTE_ACCEPTED' %}
+                    {% with status_class='border-blue-500' status_text='Devis Accepté' icon_class='text-blue-500' %}
+                    {% endwith %}
+                {% elif case.status == 'APPOINTMENT_SET' %}
+                    {% with status_class='border-indigo-500' status_text='RDV Fixé' icon_class='text-indigo-500' %}
+                    {% endwith %}
+                {% elif case.status == 'IN_PROGRESS' %}
+                    {% with status_class='border-red-500' status_text='En Réparation' icon_class='text-red-500' %}
+                    {% endwith %}
+                {% elif case.status == 'DONE' %}
+                    {% with status_class='border-green-500' status_text='Prêt à Facturer' icon_class='text-green-500' %}
+                    {% endwith %}
+                {% elif case.status == 'PAID' %}
+                    {% with status_class='border-gray-500' status_text='Terminé et Payé' icon_class='text-gray-500' %}
+                    {% endwith %}
+                {% else %}
+                    {% with status_class='border-gray-300' status_text=case.status icon_class='text-gray-400' %}
+                    {% endwith %}
+                {% endif %}
+
+                {# Utilisation des variables définies par le dernier {% with %} #}
+                <div class="bg-white shadow-xl hover:shadow-2xl transition duration-300 ease-in-out rounded-xl overflow-hidden border-l-4 {{ status_class }}">
+                    <div class="p-6 sm:p-8 flex justify-between items-start">
+                        
+                        {# Bloc de gauche : Infos Véhicule et Date #}
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Dossier créé le {{ case.created_at|date:"d F Y" }}</p>
+                            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                                {{ case.vehicle.brand }} {{ case.vehicle.model }}
+                                <span class="ml-3 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                    {{ case.vehicle.plate }}
+                                </span>
+                            </h2>
+                            <p class="mt-1 text-base text-gray-500">
+                                Problème : {{ case.faults.first.name|default:'Problème non spécifié' }}
+                            </p>
+                        </div>
+
+                        {# Bloc de droite : Statut et Actions #}
+                        <div class="text-right">
+                            <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold {{ icon_class }} bg-gray-50 border border-gray-200">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 10-2 0v4a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L9 10.586V7z" clip-rule="evenodd"></path></svg>
+                                {{ status_text }}
+                            </span>
+                            
+                            <div class="mt-4 space-x-3">
+                                <a href="{% url 'case_timeline' case.pk %}" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition duration-150">
+                                    Voir la Timeline &rarr;
+                                </a>
+                                
+                                {% if case.status == 'DONE' and case.invoice.paid == False %}
+                                    <a href="{% url 'invoice_detail' case.invoice.pk %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition duration-150">
+                                        Facture Prête
+                                    </a>
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+        <div class="text-center p-12 bg-white rounded-xl shadow-lg">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            </svg>
+            <h3 class="mt-2 text-lg font-medium text-gray-900">Aucun Dossier Actif</h3>
+            <p class="mt-1 text-sm text-gray-500">
+                Déclarez un problème pour commencer votre premier dossier de réparation.
+            </p>
+            <div class="mt-6">
+                <a href="{% url 'vehicle_list' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
+                    Déclarer un Problème
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

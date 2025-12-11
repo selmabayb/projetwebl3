@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture {{ invoice.invoice_number }}</title>
+</head>
+<body>
+    <!-- En-tête -->
+    <div class="header">
+        <div class="garage-info">
+            <h1 style="color: #d9534f;">{{ garage_name }}</h1>
+            <p>
+                {{ garage_address }}<br>
+                Tél: {{ garage_phone }}<br>
+                Email: {{ garage_email }}
+            </p>
+        </div>
+        <div class="invoice-info">
+            <h2 style="color: #d9534f;">FACTURE</h2>
+            <p>
+                <strong>N° {{ invoice.invoice_number }}</strong><br>
+                Date d'émission: {{ invoice.created_at|date:"d/m/Y" }}<br>
+                {% if invoice.is_paid %}
+                <span style="color: #5cb85c; font-weight: bold;">✓ PAYÉE</span><br>
+                Date de paiement: {{ invoice.payment_date|date:"d/m/Y" }}
+                {% else %}
+                <span style="color: #d9534f; font-weight: bold;">EN ATTENTE DE PAIEMENT</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Informations client -->
+    <div class="client-info">
+        <h2>Client</h2>
+        <p>
+            <strong>{{ invoice.case.client.get_full_name|default:invoice.case.client.username }}</strong><br>
+            Email: {{ invoice.case.client.email }}<br>
+            {% if invoice.case.client.profile.phone_number %}
+            Téléphone: {{ invoice.case.client.profile.phone_number }}<br>
+            {% endif %}
+            {% if invoice.case.client.profile.address %}
+            Adresse: {{ invoice.case.client.profile.address }}
+            {% endif %}
+        </p>
+        <p>
+            <strong>Véhicule:</strong> {{ invoice.case.vehicle }}<br>
+            <strong>Dossier:</strong> #{{ invoice.case.id }}
+        </p>
+    </div>
+
+    <!-- Description du problème -->
+    {% if invoice.case.description %}
+    <div>
+        <h2>Travaux effectués</h2>
+        <p>{{ invoice.case.description }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Détail de la facture -->
+    <div>
+        <h2>Détail de la facture</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Description</th>
+                    <th style="width: 15%;" class="text-right">Quantité</th>
+                    <th style="width: 15%;" class="text-right">Prix Unit. HT</th>
+                    <th style="width: 20%;" class="text-right">Total HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in lines %}
+                <tr>
+                    <td>{{ line.description }}</td>
+                    <td class="text-right">{{ line.quantity }}</td>
+                    <td class="text-right">{{ line.unit_price_ht|floatformat:2 }} €</td>
+                    <td class="text-right">{{ line.total_ht|floatformat:2 }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right">Total HT</td>
+                    <td class="text-right">{{ invoice.total_ht|floatformat:2 }} €</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-right">TVA ({% widthratio invoice.vat_rate 1 100 %}%)</td>
+                    <td class="text-right">{{ invoice.total_vat|floatformat:2 }} €</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" class="text-right"><strong>Total TTC</strong></td>
+                    <td class="text-right"><strong>{{ invoice.total_ttc|floatformat:2 }} €</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Statut de paiement -->
+    {% if invoice.is_paid %}
+    <div class="paid-stamp">
+        ✓ FACTURE PAYÉE
+    </div>
+    {% else %}
+    <div style="margin-top: 20px; padding: 15px; border: 2px solid #d9534f; border-radius: 5px; background-color: #fff5f5;">
+        <h3 style="color: #d9534f; margin-top: 0;">Modalités de paiement</h3>
+        <ul style="font-size: 10pt; margin-bottom: 0;">
+            <li>Paiement exigible à réception de la facture</li>
+            <li>Modes de paiement acceptés: Espèces, Carte bancaire, Chèque, Virement</li>
+            <li>Pénalités de retard: 3 fois le taux d'intérêt légal en cas de retard de paiement</li>
+            <li>Indemnité forfaitaire pour frais de recouvrement: 40€ (article L441-6 du Code de commerce)</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Conditions générales -->
+    <div>
+        <h2>Conditions générales</h2>
+        <ul style="font-size: 9pt;">
+            <li>Garantie des pièces et main d'œuvre selon les conditions légales en vigueur.</li>
+            <li>En cas de litige, seuls les tribunaux du ressort de notre siège social sont compétents.</li>
+            <li>Cette facture fait foi entre les parties et vaut titre exécutoire.</li>
+        </ul>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="footer">
+        <p>
+            {{ garage_name }} - {{ garage_address }}<br>
+            Tél: {{ garage_phone }} - Email: {{ garage_email }}
+        </p>
+        <p style="font-size: 8pt; margin-top: 10px;">
+            Document généré le {{ "now"|date:"d/m/Y à H:i" }}
+        </p>
+    </div>
+</body>
+</html>

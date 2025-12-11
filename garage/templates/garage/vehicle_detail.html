@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Détail - {{ vehicle.brand }} {{ vehicle.model }}{% endblock %}
+
+{% block content %}
+<header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gray-900">
+                🚗 {{ vehicle.brand }} {{ vehicle.model }}
+            </h1>
+            <a href="{% url 'declare_faults' vehicle.pk %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
+                Déclarer un Problème
+            </a>
+        </div>
+        <p class="mt-1 text-lg text-gray-500">{{ vehicle.plate }}</p>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        
+        {# COLONNE 1: Informations Clés & Statistiques #}
+        <div class="lg:col-span-1 space-y-8">
+            
+            {# Carte Info Principale #}
+            <div class="bg-white shadow-xl rounded-xl p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Informations Générales</h3>
+                <dl class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center">
+                        <dt class="font-medium text-gray-500">Année :</dt>
+                        <dd class="text-gray-900">{{ vehicle.year|default:'N/A' }}</dd>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <dt class="font-medium text-gray-500">Kilométrage :</dt>
+                        <dd class="text-gray-900">{{ vehicle.mileage|default:'N/A' }} km</dd>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <dt class="font-medium text-gray-500">Carburant :</dt>
+                        <dd class="text-gray-900">{{ vehicle.fuel_type|default:'N/A' }}</dd>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <dt class="font-medium text-gray-500">VIN :</dt>
+                        <dd class="text-gray-900 text-xs">{{ vehicle.vin|default:'N/A' }}</dd>
+                    </div>
+                </dl>
+            </div>
+            
+            {# Carte Maintenance #}
+            <div class="bg-white shadow-xl rounded-xl p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Échéances</h3>
+                <dl class="space-y-3 text-sm">
+                    
+                    {% with ct_due_date=vehicle.ct_due_date %}
+                        
+                        {# Logique de statut simplifiée pour le CT (Contrôle Technique) #}
+                        {% if not ct_due_date %}
+                            {% with ct_status_color='text-gray-400' ct_status_display='Non renseigné' %}{% endwith %}
+                        {% elif ct_due_date|timeuntil:"now"|first|isdigit and ct_due_date|timeuntil:"now"|slice:"1:"|lower|find:'j' > -1 and ct_due_date|timeuntil:"now"|split:" "|first|to_int < 30 %}
+                            {% with ct_status_color='text-red-600 font-bold' ct_status_display='URGENT' %}{% endwith %}
+                        {% elif ct_due_date|timeuntil:"now"|first|isdigit and ct_due_date|timeuntil:"now"|slice:"1:"|lower|find:'j' > -1 and ct_due_date|timeuntil:"now"|split:" "|first|to_int < 90 %}
+                            {% with ct_status_color='text-amber-600 font-bold' ct_status_display='À PRÉVOIR' %}{% endwith %}
+                        {% else %}
+                            {% with ct_status_color='text-green-600' ct_status_display='OK' %}{% endwith %}
+                        {% endif %}
+
+                        <div class="flex justify-between items-center">
+                            <dt class="font-medium text-gray-500">Contrôle Technique :</dt>
+                            <dd class="{{ ct_status_color }}">
+                                {% if ct_due_date %}
+                                    {{ ct_due_date|date:"d/m/Y" }}
+                                {% else %}
+                                    {{ ct_status_display }}
+                                {% endif %}
+                            </dd>
+                        </div>
+                    {% endwith %}
+                    
+                    <div class="flex justify-between items-center">
+                        <dt class="font-medium text-gray-500">Assurance :</dt>
+                        <dd class="text-gray-900">{{ vehicle.insurance_due_date|date:"d/m/Y"|default:'N/A' }}</dd>
+                    </div>
+                </dl>
+            </div>
+            
+        </div>
+        
+        {# COLONNE 2 & 3: Historique, Notes et Documentation #}
+        <div class="lg:col-span-2 space-y-8">
+            
+            {# Bloc Historique des Dossiers #}
+            <div class="bg-white shadow-xl rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Historique des Dossiers ({{ historical_cases|length }})</h3>
+                </div>
+                
+                <ul class="divide-y divide-gray-200">
+                    {% if historical_cases %}
+                        {% for case in historical_cases %}
+                        <li class="px-6 py-4 hover:bg-gray-50 transition duration-150 flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                                    <a href="{% url 'case_timeline' case.pk %}" class="flex items-center space-x-2">
+                                        <span>Dossier #{{ case.pk }}</span>
+                                    </a>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Déclaration : {{ case.created_at|date:"d M Y" }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-semibold 
+                                    {% if case.status == 'PAID' %}text-green-600{% elif case.status == 'IN_PROGRESS' %}text-red-600{% else %}text-gray-600{% endif %}">
+                                    {{ case.get_status_display }}
+                                </span>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    {% if case.status == 'DONE' or case.status == 'PAID' %}
+                                        Terminé le {{ case.updated_at|date:"d M Y" }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <p class="p-6 text-center text-gray-500">Aucun dossier de réparation enregistré pour ce véhicule.</p>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            {# Bloc NOTES ET DOCUMENTATION (NOUVEAU CONTENU) #}
+            <div class="bg-white shadow-xl rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">🖼️ Notes & Documentation Client</h2>
+
+                {# FORMULAIRE D'AJOUT DE NOTES/PHOTOS #}
+                <form method="POST" enctype="multipart/form-data" class="space-y-4 border p-4 rounded-lg bg-gray-50">
+                    {% csrf_token %}
+                    <h3 class="text-lg font-semibold text-indigo-600">Ajouter une Note ou une Photo</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        {# Type d'Asset #}
+                        <div>
+                            <label for="asset_type" class="block text-sm font-medium text-gray-700">Type de Contenu</label>
+                            <select id="asset_type" name="asset_type" onchange="toggleAssetInputs(this.value)" 
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                                <option value="NOTE">Note Textuelle</option>
+                                <option value="PHOTO">Photo ou Fichier</option>
+                            </select>
+                        </div>
+
+                        {# Champ Fichier (Visible si PHOTO sélectionné) #}
+                        <div id="file_input_group" style="display: none;">
+                            <label for="file" class="block text-sm font-medium text-gray-700">Choisir un Fichier (Max 10MB)</label>
+                            <input type="file" name="file" id="file" 
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        </div>
+                    </div>
+
+                    {# Champ Note (Visible par défaut) #}
+                    <div id="note_input_group">
+                        <label for="note_content" class="block text-sm font-medium text-gray-700">Détails/Description (Max 500 chars)</label>
+                        <textarea name="note_content" id="note_content" rows="3" maxlength="500"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Ex: Le bruit vient de la roue avant droite..."></textarea>
+                    </div>
+
+                    <button type="submit" 
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
+                        Enregistrer le Contenu
+                    </button>
+                </form>
+
+                {# SCRIPT POUR GÉRER L'AFFICHAGE CONDITIONNEL #}
+                <script>
+                    function toggleAssetInputs(assetType) {
+                        const fileGroup = document.getElementById('file_input_group');
+                        const noteGroup = document.getElementById('note_input_group');
+                        
+                        if (assetType === 'PHOTO') {
+                            fileGroup.style.display = 'block';
+                            noteGroup.style.display = 'none';
+                        } else {
+                            fileGroup.style.display = 'none';
+                            noteGroup.style.display = 'block';
+                        }
+                    }
+                    // Initialiser l'affichage au chargement de la page
+                    document.addEventListener('DOMContentLoaded', () => {
+                        toggleAssetInputs(document.getElementById('asset_type').value);
+                    });
+                </script>
+                
+                
+                {# AFFICHAGE DES NOTES ET PHOTOS EXISTANTES #}
+                <h3 class="text-xl font-semibold text-gray-800 mt-8 mb-4">Historique des Pièces Jointes</h3>
+                
+                {% if assets %}
+                    <div class="space-y-4">
+                        {% for asset in assets %}
+                            <div class="p-4 border border-gray-200 rounded-lg shadow-sm flex justify-between items-start bg-white">
+                                <div class="flex-grow">
+                                    <p class="text-xs text-gray-500">{{ asset.created_at|date:"d/m/Y H:i" }} | {{ asset.get_asset_type_display }}</p>
+                                    
+                                    {% if asset.asset_type == 'NOTE' %}
+                                        <p class="mt-1 text-gray-700 whitespace-pre-line">{{ asset.note_content }}</p>
+                                    
+                                    {% elif asset.asset_type == 'PHOTO' and asset.file %}
+                                        <p class="mt-1 text-sm font-medium text-indigo-600">Fichier Joint : <a href="{{ asset.file.url }}" target="_blank" class="underline">Voir le Fichier ({{ asset.file.name|truncatechars:30 }})</a></p>
+                                        
+                                        {% if asset.file.url|lower|slice:"-4:" in ['.jpg', '.jpeg', '.png', '.gif'] %}
+                                            <img src="{{ asset.file.url }}" alt="Photo du véhicule" class="mt-3 max-w-xs h-auto rounded-md shadow">
+                                        {% endif %}
+                                        
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 italic">Aucune note ou photo ajoutée pour ce véhicule.</p>
+                {% endif %}
+
+            </div>
+            
+        </div>
+        
+    </div>
+</main>
+{% endblock %}

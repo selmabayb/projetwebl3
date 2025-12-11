@@ -1,0 +1,65 @@
+[
+  {
+    "model": "vehicles.vehicle",
+    "pk": 1,
+    "fields": {
+      "owner": 3,
+      "brand": "Renault",
+      "model": "Clio",
+      "year": 2018,
+      "plate_number": "AB-123-CD",
+      "nickname": "",
+      "mileage": 45000,
+      "fuel_type": "ESSENCE",
+      "last_technical_inspection": "2023-06-15",
+      "insurance_company": "AXA Assurances",
+      "insurance_expiry_date": "2024-12-31",
+      "notes": "Véhicule bien entretenu, révisions à jour",
+      "is_active": true,
+      "created_at": "2024-01-10T14:30:00Z",
+      "updated_at": "2024-01-10T14:30:00Z"
+    }
+  },
+  {
+    "model": "vehicles.vehicle",
+    "pk": 2,
+    "fields": {
+      "owner": 4,
+      "brand": "Peugeot",
+      "model": "308",
+      "year": 2020,
+      "plate_number": "EF-456-GH",
+      "nickname": "",
+      "mileage": 28000,
+      "fuel_type": "DIESEL",
+      "last_technical_inspection": "2023-09-20",
+      "insurance_company": "Groupama",
+      "insurance_expiry_date": "2025-03-15",
+      "notes": "Première main, garantie constructeur active",
+      "is_active": true,
+      "created_at": "2024-01-15T09:15:00Z",
+      "updated_at": "2024-01-15T09:15:00Z"
+    }
+  },
+  {
+    "model": "vehicles.vehicle",
+    "pk": 3,
+    "fields": {
+      "owner": 3,
+      "brand": "Citroën",
+      "model": "C3",
+      "year": 2015,
+      "plate_number": "",
+      "nickname": "Ma Petite Bleue",
+      "mileage": 82000,
+      "fuel_type": "ESSENCE",
+      "last_technical_inspection": "2023-04-10",
+      "insurance_company": "MAIF",
+      "insurance_expiry_date": "2024-10-20",
+      "notes": "Véhicule de collection, entretien régulier",
+      "is_active": true,
+      "created_at": "2024-02-01T10:00:00Z",
+      "updated_at": "2024-02-01T10:00:00Z"
+    }
+  }
+]

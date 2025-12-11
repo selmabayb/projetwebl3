@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Profil Utilisateur{% endblock %}
+
+{% block content %}
+<header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            👤 Mon Profil
+        </h1>
+        <p class="mt-1 text-lg text-gray-500">Mettez à jour vos informations personnelles et de contact.</p>
+    </div>
+</header>
+
+<main class="max-w-4xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-2xl rounded-xl p-8">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="space-y-6">
+                
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Informations du Compte</h2>
+
+                {# Prénom et Nom #}
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <input type="text" name="first_name" id="first_name" required
+                               value="{{ request.user.first_name }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <input type="text" name="last_name" id="last_name" required
+                               value="{{ request.user.last_name }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                {# Email et Téléphone #}
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Adresse Email</label>
+                        <input type="email" name="email" id="email" required
+                               value="{{ request.user.email }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                        <input type="text" name="phone_number" id="phone_number"
+                               value="{{ profile.phone_number|default_if_none:'' }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+                
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4 pt-4">Adresse</h2>
+
+                {# Adresse Complète #}
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-700">Adresse Complète (Facturation/Contact)</label>
+                    <textarea name="address" id="address" rows="3"
+                              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">{{ profile.address|default_if_none:'' }}</textarea>
+                </div>
+
+                {# Bouton de Soumission #}
+                <div class="pt-5">
+                    <button type="submit"
+                            class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                        Sauvegarder les Modifications
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

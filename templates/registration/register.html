@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inscription - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center min-vh-100 py-5"
+    style="background: linear-gradient(135deg, #f0fdf4 0%, #fff 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-primary text-white text-center py-4 border-0">
+                        <h3 class="fw-bold mb-0"><i class="fa-solid fa-user-plus me-2"></i> Créer un compte</h3>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <!-- Display generic form errors -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger small">
+                                {{ form.non_field_errors }}
+                            </div>
+                            {% endif %}
+
+                            <!-- Iterate over fields to customize rendering if needed, or just standard render -->
+                            {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label small fw-bold text-secondary">
+                                    {{ field.label }}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="form-text small text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+
+                            <!-- Add Bootstrap class to all inputs via JS or simple replace filter isn't easy here without widget tweaks. 
+                                 However, usually it renders basic inputs. We'll use a script to add classes or assume default looking is okay-ish 
+                                 or better: rely on a quick widget tweak in views? No, let's just let it render and style standard inputs. -->
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                                    S'inscrire
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light text-center py-3 border-0">
+                        <p class="small text-secondary mb-0">Déjà inscrit ? <a href="{% url 'login' %}"
+                                class="text-primary fw-bold text-decoration-none">Se connecter</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Quick script to add Bootstrap classes to Django form fields
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.classList.add('form-control');
+    });
+</script>
+{% endblock %}

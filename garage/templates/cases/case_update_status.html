@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier le statut - Dossier #{{ case.id }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cases:case_list' %}">Tous les Dossiers</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cases:case_detail' case.pk %}">Dossier #{{ case.id }}</a></li>
+                <li class="breadcrumb-item active">Modifier le statut</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-arrow-repeat"></i> Modifier le statut du dossier
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Dossier #{{ case.id }}</strong> - {{ case.vehicle }}<br>
+                    Statut actuel : <strong>{{ case.get_status_display }}</strong>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.status.id_for_label }}" class="form-label">
+                            Nouveau statut <span class="text-danger">*</span>
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="invalid-feedback d-block">{{ form.status.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Sélectionnez le nouveau statut pour ce dossier. Seules les transitions autorisées sont proposées.
+                        </small>
+                    </div>
+
+                    <!-- Workflow visuel -->
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2">Workflow standard :</h6>
+                            <div class="workflow-steps">
+                                <small>
+                                    <span class="badge bg-info">Nouveau</span> →
+                                    <span class="badge bg-warning text-dark">Devis émis</span> →
+                                    <span class="badge bg-success">Devis accepté</span> →
+                                    <span class="badge bg-success">RDV confirmé</span> →
+                                    <span class="badge bg-primary">En cours</span> →
+                                    <span class="badge bg-success">Prêt</span> →
+                                    <span class="badge bg-secondary">Clôturé</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'cases:case_detail' case.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Mettre à jour le statut
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

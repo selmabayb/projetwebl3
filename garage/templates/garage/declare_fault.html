@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Déclarer un Problème{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6">🛠️ Déclarer un Problème sur votre Véhicule</h1>
+
+    <div class="bg-white shadow-xl rounded-xl p-6 mb-8 border-l-4 border-indigo-700">
+        <h2 class="text-xl font-semibold text-gray-800">Véhicule concerné</h2>
+        <p class="mt-1 text-2xl font-bold text-gray-900">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.plate }})</p>
+        <p class="text-sm text-gray-500">Année: {{ vehicle.year }} - Kilométrage: {{ vehicle.mileage }} km</p>
+    </div>
+
+    <form method="post" id="fault-declaration-form">
+        {% csrf_token %}
+        <input type="hidden" name="vehicle" value="{{ vehicle.pk }}">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="md:col-span-2">
+                <div class="bg-white shadow-xl rounded-xl p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">2. Sélectionnez les Pannes</h2>
+                    <p class="text-sm text-gray-500 mb-4">Cochez les problèmes qui correspondent à la situation de votre véhicule. Cela générera automatiquement un devis initial.</p>
+
+                    <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        {% for fault in faults %}
+                        <label class="flex items-start p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150 cursor-pointer">
+                            <input type="checkbox" name="faults" value="{{ fault.pk }}" data-labor-time="{{ fault.labor_time }}" data-labor-price="{{ fault.labor_price }}" data-parts-cost="{{ fault.parts_cost }}" class="h-5 w-5 text-indigo-700 border-gray-300 rounded mt-1 fault-checkbox">
+                            <div class="ml-3">
+                                <p class="text-base font-medium text-gray-900">{{ fault.name }}</p>
+                                <p class="text-sm text-gray-500">{{ fault.category|default:"Général" }}</p>
+                                <p class="text-xs text-indigo-600">Est. Tps : {{ fault.labor_time }}h / Coût Pièces Est. : {{ fault.parts_cost }}€</p>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white shadow-xl rounded-xl p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">3. Notes Additionnelles</h2>
+                    <textarea name="notes" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Décrivez plus précisément votre problème si nécessaire (facultatif)."></textarea>
+                </div>
+            </div>
+
+            <div class="md:col-span-1 sticky top-8">
+                <div class="bg-indigo-700 text-white shadow-xl rounded-xl p-6">
+                    <h2 class="text-2xl font-bold mb-4">💶 Devis Estimatif (LIVE)</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between border-b border-indigo-500 pb-2">
+                            <span class="font-medium">Coût Pièces Estimé</span>
+                            <span id="live-parts-cost" class="font-bold">0.00 €</span>
+                        </div>
+                        <div class="flex justify-between border-b border-indigo-500 pb-2">
+                            <span class="font-medium">Main d'œuvre Estimée</span>
+                            <span id="live-labor-cost" class="font-bold">0.00 €</span>
+                        </div>
+                        <div class="flex justify-between pt-2 border-t border-indigo-500">
+                            <span class="text-xl font-extrabold">TOTAL ESTIMÉ (HT)</span>
+                            <span id="live-total-cost" class="text-xl font-extrabold">0.00 €</span>
+                        </div>
+                        <p class="text-xs text-indigo-200 mt-2">Ce devis est une estimation basée sur les pannes déclarées. Le devis final sera validé par le garage après diagnostic.</p>
+                    </div>
+
+                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-indigo-700 bg-white hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150" disabled id="submit-button">
+                        Soumettre la Demande & Accepter le Devis Initial
+                    </button>
+                    <p id="selection-alert" class="text-center mt-2 text-sm text-white">Veuillez sélectionner au moins une panne.</p>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // --- JavaScript pour le Devis Live ---
+    const checkboxes = document.querySelectorAll('.fault-checkbox');
+    const livePartsCost = document.getElementById('live-parts-cost');
+    const liveLaborCost = document.getElementById('live-labor-cost');
+    const liveTotalCost = document.getElementById('live-total-cost');
+    const submitButton = document.getElementById('submit-button');
+    const selectionAlert = document.getElementById('selection-alert');
+    
+    // Prix de la main d'œuvre horaire (à récupérer de la base de données ou config, ici on prend la moyenne des pannes sélectionnées)
+    // Pour simplifier, on prend le labor_price de chaque Fault, qui est le taux horaire de CETTE panne.
+    
+    function updateLiveQuote() {
+        let totalPartsCost = 0.0;
+        let totalLaborCost = 0.0;
+        let selectedCount = 0;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedCount++;
+                const laborTime = parseFloat(checkbox.dataset.laborTime);
+                const laborPrice = parseFloat(checkbox.dataset.laborPrice);
+                const partsCost = parseFloat(checkbox.dataset.partsCost);
+                
+                // Calcul pour une panne :
+                totalLaborCost += laborTime * laborPrice;
+                totalPartsCost += partsCost;
+            }
+        });
+
+        const totalCost = totalLaborCost + totalPartsCost;
+
+        // Mise à jour de l'UI
+        livePartsCost.textContent = totalPartsCost.toFixed(2) + ' €';
+        liveLaborCost.textContent = totalLaborCost.toFixed(2) + ' €';
+        liveTotalCost.textContent = totalCost.toFixed(2) + ' €';
+
+        // Gestion du bouton de soumission
+        if (selectedCount > 0) {
+            submitButton.disabled = false;
+            submitButton.classList.remove('opacity-50');
+            selectionAlert.classList.add('hidden');
+        } else {
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-50');
+            selectionAlert.classList.remove('hidden');
+        }
+    }
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateLiveQuote);
+    });
+
+    // Initialiser le devis au chargement de la page
+    updateLiveQuote(); 
+
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load garage_filters %} {# <--- Ligne essentielle pour que le filtre fonctionne #}
+
+{% block title %}Gestion des Dossiers - Garage{% endblock %}
+
+{% block content %}
+<header class="bg-gray-900 shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-white">
+            🛠️ Tableau de Gestion des Dossiers
+        </h1>
+        <p class="mt-1 text-lg text-gray-400">Suivi et mise à jour des véhicules en atelier.</p>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {# Colonne 1: À Traiter #}
+        {% with title='À TRAITER' border_color='border-amber-500' text_color='text-amber-700' statuses=status_groups.A_TRAITER %}
+            <div class="bg-white rounded-xl shadow-2xl p-4 border-t-8 {{ border_color }}">
+                <h2 class="text-xl font-extrabold {{ text_color }} mb-4 border-b pb-2 flex justify-between items-center">
+                    {{ title }}
+                    <span class="text-sm font-medium text-gray-500">{{ cases|filter_by_status:statuses|length }}</span>
+                </h2>
+                <div class="space-y-4 h-[600px] overflow-y-auto pr-2">
+                    {% for case in cases|filter_by_status:statuses %}
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition duration-150">
+                            <p class="text-sm font-semibold text-gray-600 mb-1">Dossier #{{ case.pk }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ case.vehicle.brand }} {{ case.vehicle.model }}</h3>
+                            <p class="text-xs text-gray-500">{{ case.vehicle.plate }} | Créé: {{ case.created_at|date:"d/m" }}</p>
+                            
+                            <div class="mt-3">
+                                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    {{ case.get_status_display }}
+                                </span>
+                                {% if case.appointment.date %}
+                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-2">
+                                        RDV: {{ case.appointment.date|date:"d/m" }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            <a href="{% url 'case_update_status' case.pk %}" class="mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-800 transition duration-150">
+                                Voir & Mettre à Jour &rarr;
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endwith %}
+
+        {# Colonne 2: En Cours #}
+        {% with title='EN COURS' border_color='border-red-500' text_color='text-red-700' statuses=status_groups.EN_COURS %}
+            <div class="bg-white rounded-xl shadow-2xl p-4 border-t-8 {{ border_color }}">
+                <h2 class="text-xl font-extrabold {{ text_color }} mb-4 border-b pb-2 flex justify-between items-center">
+                    {{ title }}
+                    <span class="text-sm font-medium text-gray-500">{{ cases|filter_by_status:statuses|length }}</span>
+                </h2>
+                <div class="space-y-4 h-[600px] overflow-y-auto pr-2">
+                    {% for case in cases|filter_by_status:statuses %}
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition duration-150">
+                            <p class="text-sm font-semibold text-gray-600 mb-1">Dossier #{{ case.pk }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ case.vehicle.brand }} {{ case.vehicle.model }}</h3>
+                            <p class="text-xs text-gray-500">{{ case.vehicle.plate }} | Début: {{ case.updated_at|date:"d/m" }}</p>
+                            
+                            <div class="mt-3">
+                                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    {{ case.get_status_display }}
+                                </span>
+                            </div>
+                            
+                            <a href="{% url 'case_update_status' case.pk %}" class="mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-800 transition duration-150">
+                                Voir & Mettre à Jour &rarr;
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endwith %}
+
+        {# Colonne 3: Prêt à Finir/Terminé #}
+        {% with title='PRÊT À FINIR' border_color='border-green-500' text_color='text-green-700' statuses=status_groups.PRET_A_FINIR %}
+            <div class="bg-white rounded-xl shadow-2xl p-4 border-t-8 {{ border_color }}">
+                <h2 class="text-xl font-extrabold {{ text_color }} mb-4 border-b pb-2 flex justify-between items-center">
+                    {{ title }}
+                    <span class="text-sm font-medium text-gray-500">{{ cases|filter_by_status:statuses|length }}</span>
+                </h2>
+                <div class="space-y-4 h-[600px] overflow-y-auto pr-2">
+                    {% for case in cases|filter_by_status:statuses %}
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition duration-150">
+                            <p class="text-sm font-semibold text-gray-600 mb-1">Dossier #{{ case.pk }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ case.vehicle.brand }} {{ case.vehicle.model }}</h3>
+                            <p class="text-xs text-gray-500">{{ case.vehicle.plate }} | Fini: {{ case.updated_at|date:"d/m" }}</p>
+                            
+                            <div class="mt-3">
+                                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    {{ case.get_status_display }}
+                                </span>
+                            </div>
+                            
+                            <a href="{% url 'case_update_status' case.pk %}" class="mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-800 transition duration-150">
+                                Voir & Mettre à Jour &rarr;
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endwith %}
+
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Modifier le statut du dossier {{ case.id }}</h2>
+<form method="POST">
+    {% csrf_token %}
+    <select name="status">
+        {% for key, label in case._meta.get_field('status').choices %}
+        <option value="{{ key }}">{{ label }}</option>
+        {% endfor %}
+    </select>
+    <textarea name="comment" placeholder="Commentaire"></textarea>
+    <button class="btn btn-primary">Enregistrer</button>
+</form>
+{% endblock %}

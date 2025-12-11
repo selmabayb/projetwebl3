@@ -1,0 +1,1796 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{makecell}
+\usepackage{fancyhdr}
+\usepackage{ragged2e}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\DeclareUnicodeCharacter{202F}{\,}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{amsmath}
+\setcounter{tocdepth}{1}
+\usepackage{xcolor}
+\usepackage{caption}
+\captionsetup[table]{position=top}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\thispagestyle{empty}
+\begin{center}
+
+{\fontsize{11pt}{11pt}\selectfont \textbf{Université Paris Nanterre}}\\
+{\fontsize{11pt}{11pt}\selectfont \textbf{L3 MIAGE}}\\[1cm]
+
+\begin{minipage}[c]{0.45\textwidth}
+  \centering
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+  \centering
+\end{minipage}
+
+\vspace{1.8cm}
+
+{\fontsize{36pt}{36pt}\selectfont \textbf{\textcolor{blue}{\textbf{Cahier des charges}}}}\\[0.6cm]
+
+{\fontsize{14pt}{14pt}\selectfont L3 MIAGE}\\[0.5cm]
+{\fontsize{14pt}{14pt}\selectfont \textbf{Projet Web}}
+
+\vspace{0.4cm}
+\noindent\makebox[\linewidth]{\color{blue}\rule{12cm}{1pt}}
+
+\vspace{1.5cm}
+
+{\fontsize{14pt}{14pt}\selectfont \textbf{Soutenu le: } \hspace{0.2cm} 12/12/2025}\\[0.2cm]
+{\fontsize{14pt}{14pt}\selectfont \textbf{Réalisé par:} \hspace{0.2cm} Baaboura Ritej, Thibaud Thomas Lamotte, Baibou Selma}
+
+\vspace{1cm}
+
+{\fontsize{16pt}{16pt}\selectfont \textbf{Système de Gestion de Garage}}\\
+\vspace{0.4cm}
+{\fontsize{16pt}{16pt} \emph{Application Web Django pour la Gestion des Réparations Automobiles}}
+\end{center}
+\vspace{1cm}
+
+\vfill
+\begin{center}
+{\fontsize{10pt}{10pt}\selectfont \textbf{Année Universitaire 2024/2025}}\\[0.2cm]
+{\fontsize{9pt}{9pt}\selectfont \textit{Version 3.0 - Document actualisé après implémentation}}
+\end{center}
+\clearpage
+
+\thispagestyle{empty}
+\vspace*{\fill}
+\clearpage
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\chapter*{Liste des abréviations}
+\addcontentsline{toc}{chapter}{Liste des abréviations}
+\begin{tabular}{p{4cm} p{10cm}}
+UML & Unified Modeling Language \\
+MVP & Minimum Viable Product \\
+RDV & Rendez-vous \\
+CT & Contrôle Technique \\
+MO & Main d'Œuvre \\
+HT & Hors Taxes \\
+TTC & Toutes Taxes Comprises \\
+TVA & Taxe sur la Valeur Ajoutée \\
+PDF & Portable Document Format \\
+CRUD & Create, Read, Update, Delete \\
+ETA & Estimated Time of Arrival \\
+RGPD & Règlement Général sur la Protection des Données \\
+TTFB & Time To First Byte \\
+WCAG & Web Content Accessibility Guidelines \\
+\end{tabular}
+
+\newpage
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+
+Dans un contexte où la digitalisation des services devient indispensable, les garages automobiles doivent moderniser leur gestion pour offrir une meilleure expérience client et optimiser leurs processus internes. La gestion traditionnelle, basée sur des documents papier et des échanges téléphoniques, présente de nombreuses limites en termes de traçabilité, de réactivité et d'efficacité.
+
+Ce projet vise à développer une solution web complète permettant aux clients de déclarer leurs problèmes automobiles, d'obtenir des devis automatiques, de prendre rendez-vous et de suivre l'avancement des réparations. Parallèlement, le système offre aux gestionnaires du garage des outils pour valider les devis, gérer les interventions et générer la facturation.
+
+Réalisé avec Django et suivant une méthodologie Agile Scrum, ce projet s'inscrit dans une démarche de professionnalisation et répond aux exigences d'un projet de fin d'études. Il permettra de démontrer les compétences acquises en développement web, en conception de systèmes et en gestion de projet.
+
+Ce document présente le cadre général du projet, l'analyse des besoins, la planification des sprints selon la méthodologie Scrum, ainsi que les spécifications techniques et fonctionnelles de la solution à développer.
+
+\chapter{Cadre Général du Projet}
+
+\section{Introduction}
+\label{sec:intro}
+
+Ce chapitre vise à introduire le projet dans son contexte général. Nous présenterons d'abord le contexte et les objectifs du système de gestion de garage, puis nous analyserons l'existant et ses limites. Ensuite, nous définirons la problématique et la solution proposée. Enfin, nous justifierons le choix de la méthodologie Agile avec le framework Scrum pour piloter ce projet.
+
+\section{Contexte général du projet}
+\label{sec:contexte}
+
+La gestion d'un garage automobile implique de nombreuses tâches complexes : accueil des clients, diagnostic des pannes, établissement de devis, planification des interventions, suivi des réparations et facturation. Actuellement, ces processus sont souvent gérés de manière manuelle ou à l'aide d'outils disparates (téléphone, documents papier, tableurs Excel), ce qui génère des inefficacités et des risques d'erreurs.
+
+Les clients, de leur côté, manquent de visibilité sur l'état d'avancement de leurs réparations et doivent multiplier les appels pour obtenir des informations. Cette situation impacte négativement leur satisfaction et la réputation du garage.
+
+Dans ce contexte, le développement d'une plateforme web centralisée devient une nécessité pour moderniser la gestion du garage, améliorer la relation client et optimiser les processus internes.
+
+\subsection{Analyse et critique de l'existant}
+\label{sec:existant}
+
+Actuellement, la gestion des interventions dans la plupart des garages repose sur des méthodes traditionnelles présentant plusieurs inconvénients majeurs:
+
+\begin{itemize}
+    \item \textbf{Absence de système centralisé}: Les informations sont dispersées entre différents supports (papier, téléphone, emails), rendant difficile la traçabilité et le suivi.
+    
+    \item \textbf{Processus manuel de devis}: L'établissement d'un devis nécessite des calculs manuels, des recherches de tarifs et prend du temps, avec des risques d'erreurs de calcul.
+    
+    \item \textbf{Manque de visibilité pour les clients}: Les clients n'ont aucun moyen de suivre l'avancement de leur dossier sans appeler le garage, générant une charge de travail supplémentaire pour le personnel.
+    
+    \item \textbf{Gestion inefficace des rendez-vous}: La planification se fait manuellement, avec des risques de double réservation ou d'oubli.
+    
+    \item \textbf{Difficulté d'archivage}: La conservation et la recherche des documents (devis, factures) sont fastidieuses.
+    
+    \item \textbf{Perte d'informations}: Les échanges verbaux ne laissent pas de trace, ce qui peut poser problème en cas de litige.
+\end{itemize}
+
+Ces limitations entraînent une perte de temps, des erreurs potentielles, une insatisfaction client et une image moins professionnelle pour le garage.
+
+\subsection{Problématique du projet}
+\label{sec:problematique}
+
+Face aux limites identifiées dans la gestion traditionnelle d'un garage automobile, la question principale qui se pose est:
+
+\textbf{Comment concevoir et développer une solution web permettant d'automatiser et de centraliser la gestion des interventions automobiles, depuis la déclaration des problèmes jusqu'à la facturation, tout en offrant une expérience utilisateur optimale tant pour les clients que pour les gestionnaires du garage?}
+
+Cette problématique soulève plusieurs sous-questions:
+\begin{itemize}
+    \item Comment permettre aux clients de déclarer facilement leurs problèmes sans connaissances techniques?
+    \item Comment automatiser le calcul des devis de manière fiable et transparente?
+    \item Comment gérer efficacement les rendez-vous et éviter les conflits?
+    \item Comment assurer un suivi en temps réel du statut des réparations?
+    \item Comment faciliter la gestion administrative pour le garage (devis, factures, historique)?
+\end{itemize}
+
+\subsection{Solution proposée}
+\label{sec:solution}
+
+Pour répondre à cette problématique, nous proposons de développer une application web complète basée sur Django, offrant les fonctionnalités suivantes:
+
+\textbf{Pour les clients:}
+\begin{itemize}
+    \item Création de compte et authentification sécurisée
+    \item Ajout et gestion de leurs véhicules avec informations complètes
+    \item Déclaration intuitive des problèmes via une interface à boutons (sans saisie de texte libre)
+    \item Génération automatique de devis détaillés (main d'œuvre + pièces)
+    \item Acceptation explicite du devis avant réservation
+    \item Téléchargement des devis au format PDF
+    \item Réservation de créneaux de rendez-vous disponibles
+    \item Annulation ou modification de rendez-vous selon conditions
+    \item Suivi en temps réel de l'avancement des réparations via une timeline
+    \item Notifications in-app des changements de statut
+    \item Accès à l'historique complet de leurs documents (devis, factures)
+\end{itemize}
+
+\textbf{Pour les gestionnaires:}
+\begin{itemize}
+    \item Tableau de bord centralisé de tous les dossiers
+    \item Filtrage et recherche des dossiers par statut ou client
+    \item Validation et modification des devis avant acceptation
+    \item Gestion des statuts des interventions (Nouveau, Devis émis, Devis accepté, RDV confirmé, En cours, Prêt, Clôturé)
+    \item Génération automatique de factures au format PDF
+    \item Notification automatique des clients (e-mail et in-app) lors des changements de statut
+    \item Clôture et archivage des dossiers terminés
+\end{itemize}
+
+\textbf{Pour l'administration:}
+\begin{itemize}
+    \item Configuration des groupes de pannes et des barèmes
+    \item Gestion des tarifs (taux horaire, TVA, prix des pièces)
+    \item Définition des créneaux de rendez-vous disponibles (modèles récurrents et exceptions)
+    \item Gestion complète des utilisateurs via l'interface Django Admin
+\end{itemize}
+
+Cette solution permettra de digitaliser l'ensemble du processus, d'améliorer l'expérience client, de réduire les erreurs et d'optimiser la productivité du garage.
+
+\section{Méthodologies de gestion de projet}
+\label{sec:methode}
+
+Le choix d'une méthodologie appropriée est crucial pour la réussite du projet. Deux grandes approches existent: les méthodes traditionnelles (Waterfall) et les méthodes agiles (Scrum, Kanban). Le tableau ci-dessous compare ces approches:
+
+\begin{table}[H]
+\centering
+\caption{Comparaison entre les méthodes Waterfall et Agile (Scrum)}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Critère} & \textbf{Waterfall} & \textbf{Agile (Scrum)} \\
+\hline
+Approche & Séquentielle et figée & Itérative et évolutive \\
+\hline
+Planification & Complète en début de projet & Progressive par sprint \\
+\hline
+Adaptation aux changements & Très difficile après la phase de conception & Très flexible à chaque sprint \\
+\hline
+Implication des utilisateurs & Limitée (début et fin) & Continue tout au long du projet \\
+\hline
+Livraisons & Livraison unique en fin de projet & Livraisons progressives et fréquentes \\
+\hline
+Visibilité & Faible pendant le développement & Haute avec des démos régulières \\
+\hline
+Risques & Découverte tardive des problèmes & Détection rapide et correction itérative \\
+\hline
+Documentation & Très complète & Suffisante et évolutive \\
+\hline
+Taille d'équipe & Adaptée aux grandes équipes & Idéale pour petites équipes (3-9 personnes) \\
+\hline
+Pertinence pour notre projet & Peu adaptée & Parfaitement adaptée \\
+\hline
+\end{tabular}
+\label{tab:comparaison-methodes}
+\end{table}
+
+\subsection{Choix de la méthodologie}
+
+Pour ce projet, nous avons choisi d'adopter la méthodologie \textbf{Agile avec le framework Scrum} pour les raisons suivantes:
+
+\begin{enumerate}
+    \item \textbf{Flexibilité}: Scrum permet d'adapter le projet aux retours des utilisateurs et aux changements de besoins identifiés en cours de développement.
+    
+    \item \textbf{Livraisons incrémentales}: Chaque sprint produit un incrément fonctionnel, permettant de valider progressivement les fonctionnalités et de détecter rapidement les problèmes.
+    
+    \item \textbf{Collaboration renforcée}: Les rituels Scrum (daily stand-up, sprint review, rétrospective) favorisent la communication au sein de l'équipe de 3 personnes.
+    
+    \item \textbf{Visibilité continue}: Le Product Owner et les parties prenantes peuvent suivre l'avancement réel du projet à chaque sprint.
+    
+    \item \textbf{Gestion des risques}: L'approche itérative permet d'identifier et de résoudre rapidement les obstacles techniques ou fonctionnels.
+    
+    \item \textbf{Adaptée aux petites équipes}: Scrum est particulièrement efficace pour des équipes de 3 à 9 personnes comme la nôtre.
+    
+    \item \textbf{Amélioration continue}: Les rétrospectives permettent d'optimiser constamment les processus de travail.
+\end{enumerate}
+
+\textbf{Organisation Scrum retenue:}
+\begin{itemize}
+    \item \textbf{Durée des sprints}: 1 à 2 semaines
+    \item \textbf{Nombre de sprints}: 3 sprints principaux
+    \item \textbf{Rituels}: Sprint Planning, Daily Stand-up (10 min), Sprint Review (démo), Sprint Retrospective
+    \item \textbf{Rôles}: Product Owner (enseignant/client fictif), Scrum Master (membre de l'équipe en rotation), Development Team (3 étudiants)
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion-ch1}
+
+Ce premier chapitre a permis de poser le cadre général du projet. Nous avons identifié les limites de la gestion traditionnelle des garages automobiles et défini une solution digitale complète pour y répondre. Le choix de la méthodologie Agile Scrum assure une approche structurée, flexible et collaborative, adaptée à notre contexte de projet académique en équipe réduite. Le chapitre suivant détaillera l'analyse et la spécification des besoins du système.
+
+\chapter{Sprint 0 : Analyse et Spécification des Besoins}
+
+\section{Introduction}
+\label{sec:intro-sprint0}
+
+Le Sprint 0, également appelé sprint de préparation, est une phase cruciale qui précède le développement. Il permet d'établir les fondations du projet en définissant clairement les besoins, l'architecture et l'environnement de travail. Ce chapitre présente les résultats de cette phase d'analyse, incluant l'identification des acteurs, la spécification des besoins fonctionnels et non fonctionnels, la modélisation UML, le backlog produit et l'architecture technique du système.
+
+\section{Acteurs du Système}
+\label{sec:acteurs}
+
+Le système de gestion de garage implique trois types d'acteurs principaux, chacun ayant des rôles et des permissions spécifiques:
+
+\begin{table}[H]
+\centering
+\caption{Identification des acteurs du système}
+\begin{tabular}{|p{3cm}|p{11cm}|}
+\hline
+\textbf{Acteur} & \textbf{Description et rôle} \\
+\hline
+\textbf{Client} & 
+Utilisateur externe qui possède un ou plusieurs véhicules. Il peut:
+\begin{itemize}
+    \item Créer un compte et s'authentifier
+    \item Ajouter, modifier et consulter ses véhicules
+    \item Déclarer des problèmes via l'interface à boutons
+    \item Consulter et télécharger ses devis (PDF)
+    \item Accepter ou refuser un devis
+    \item Réserver, modifier ou annuler un créneau de rendez-vous
+    \item Suivre l'évolution du statut de son dossier
+    \item Recevoir des notifications in-app
+    \item Accéder à l'historique de ses documents (devis, factures)
+\end{itemize}
+\\
+\hline
+\textbf{Gestionnaire} & 
+Employé du garage (garagiste, responsable atelier). Il peut:
+\begin{itemize}
+    \item S'authentifier avec son compte gestionnaire
+    \item Visualiser tous les dossiers clients
+    \item Filtrer et rechercher des dossiers par statut ou critères
+    \item Modifier et valider les devis (ajustement des lignes)
+    \item Verrouiller les devis après validation
+    \item Gérer les statuts des interventions (progression du workflow)
+    \item Définir une estimation de temps (ETA)
+    \item Générer des factures au format PDF
+    \item Notifier les clients par email et in-app
+    \item Clôturer et archiver les dossiers terminés
+\end{itemize}
+\\
+\hline
+\textbf{Administrateur} & 
+Super-utilisateur disposant d'un accès complet au système. Il peut:
+\begin{itemize}
+    \item Accéder à l'interface Django Admin
+    \item Gérer les utilisateurs (CRUD clients et gestionnaires)
+    \item Configurer les groupes de pannes et sous-pannes
+    \item Définir les barèmes (heures de main d'œuvre, prix pièces)
+    \item Paramétrer le taux horaire et le taux de TVA
+    \item Gérer les créneaux de rendez-vous (modèles récurrents et exceptions)
+    \item Superviser toutes les données du système
+\end{itemize}
+\\
+\hline
+\end{tabular}
+\label{tab:acteurs}
+\end{table}
+
+\section{Besoins Fonctionnels}
+\label{sec:besoins-fonctionnels}
+
+Les besoins fonctionnels décrivent les fonctionnalités que le système doit offrir aux utilisateurs. Ils sont organisés par acteur et par module fonctionnel.
+
+\subsection{Besoins liés à l'authentification et la gestion des comptes}
+
+\begin{itemize}
+    \item \textbf{BF1 - Créer un compte}: Permettre à un nouveau client de créer un compte avec email, nom, prénom et mot de passe.
+    \item \textbf{BF2 - Se connecter}: Permettre à tous les utilisateurs de s'authentifier avec email et mot de passe.
+    \item \textbf{BF3 - Se déconnecter}: Permettre aux utilisateurs de terminer leur session de manière sécurisée.
+    \item \textbf{BF4 - Réinitialiser le mot de passe}: Permettre la récupération de compte via email en cas d'oubli.
+\end{itemize}
+
+\subsection{Besoins liés à la gestion des véhicules (Client)}
+
+\begin{itemize}
+    \item \textbf{BF5 - Ajouter un véhicule}: Permettre au client d'enregistrer un nouveau véhicule avec: marque, modèle, année, kilométrage, date du dernier contrôle technique, immatriculation (optionnel), surnom du véhicule (obligatoire si pas d'immatriculation, ex: "Voiture principale"), nom de l'assurance, date d'échéance de l'assurance.
+    \item \textbf{BF6 - Modifier un véhicule}: Permettre au client de mettre à jour les informations d'un véhicule existant.
+    \item \textbf{BF7 - Supprimer un véhicule}: Permettre au client de retirer un véhicule de son compte (suppression logique, conservation pour historique des dossiers).
+    \item \textbf{BF8 - Consulter ses véhicules}: Afficher la liste des véhicules enregistrés par le client avec leurs informations principales.
+    \item \textbf{BF8 bis - Historique Véhicule}: Traçabilité automatique des événements (création, modification kilométrage, désactivation) pour audit et suivi.
+\end{itemize}
+
+\subsection{Besoins liés à la déclaration des problèmes et devis (Client)}
+
+\begin{itemize}
+    \item \textbf{BF9 - Sélectionner un véhicule}: Choisir le véhicule concerné par la déclaration de problème.
+    \item \textbf{BF10 - Déclarer des problèmes via boutons}: Afficher une interface avec des groupes de pannes (Carrosserie, Pneus, Pare-brise, Moteur, Freinage, Électricité, Vidange, Climatisation) et leurs sous-catégories sous forme de boutons cliquables.
+    \item \textbf{BF11 - Valider la sélection}: Empêcher la validation si aucun problème n'est sélectionné (au moins un requis).
+    \item \textbf{BF12 - Générer un devis automatique}: Calculer automatiquement le devis basé sur les problèmes sélectionnés en appliquant les barèmes de main d'œuvre et les prix des pièces par défaut.
+    \item \textbf{BF13 - Afficher le devis}: Présenter le détail du devis avec les lignes de main d'œuvre, les pièces, les montants HT, TVA et TTC, ainsi que la date de validité (15 jours).
+    \item \textbf{BF14 - Télécharger le devis PDF}: Permettre au client de télécharger le devis au format PDF.
+    \item \textbf{BF44 - Accepter le devis}: Permettre au client d'accepter explicitement le devis via un bouton "Accepter ce devis". L'acceptation est requise avant de pouvoir réserver un RDV.
+    \item \textbf{BF45 - Refuser le devis}: Permettre au client de refuser un devis avec saisie optionnelle d'un motif. Le dossier passe alors en statut "Refusé" et peut être archivé.
+\end{itemize}
+
+\subsection{Besoins liés aux rendez-vous (Client)}
+
+\begin{itemize}
+    \item \textbf{BF15 - Consulter les créneaux disponibles}: Afficher une liste de créneaux horaires prédéfinis non réservés.
+    \item \textbf{BF16 - Réserver un créneau}: Permettre au client de choisir et confirmer un rendez-vous (uniquement si devis accepté).
+    \item \textbf{BF17 - Mise à jour automatique}: Rendre indisponible un créneau une fois réservé pour éviter les doubles réservations.
+    \item \textbf{BF46 - Modifier un rendez-vous}: Permettre au client de modifier son RDV (changer de créneau) jusqu'à 24 heures avant l'heure prévue.
+    \item \textbf{BF47 - Annuler un rendez-vous}: Permettre au client d'annuler son RDV jusqu'à 24 heures avant l'heure prévue. Le créneau redevient disponible. Le dossier revient au statut "Devis accepté".
+\end{itemize}
+
+\subsection{Besoins liés au suivi (Client)}
+
+\begin{itemize}
+    \item \textbf{BF18 - Consulter ses dossiers}: Afficher la liste des dossiers du client avec leurs statuts.
+    \item \textbf{BF19 - Suivre l'évolution}: Présenter une timeline visuelle des statuts (Nouveau → Devis émis → Devis accepté → RDV confirmé → En cours → Prêt → Clôturé).
+    \item \textbf{BF20 - Consulter l'ETA}: Afficher l'estimation de fin de réparation si définie par le gestionnaire.
+    \item \textbf{BF21 - Télécharger les documents}: Accéder et télécharger les devis et factures de ses dossiers.
+    \item \textbf{BF48 - Recevoir des notifications in-app}: Afficher un badge de notification dans le header et un centre de notifications listant les événements récents (changement de statut, devis prêt, véhicule prêt).
+\end{itemize}
+
+\subsection{Besoins liés à la gestion des dossiers (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF22 - Visualiser tous les dossiers}: Afficher un tableau récapitulatif de tous les dossiers avec informations clés (client, véhicule, statut, date).
+    \item \textbf{BF23 - Filtrer par statut}: Permettre de filtrer l'affichage des dossiers selon leur statut.
+    \item \textbf{BF24 - Rechercher un dossier}: Rechercher par nom de client ou immatriculation.
+    \item \textbf{BF25 - Consulter le détail d'un dossier}: Afficher toutes les informations d'un dossier (véhicule, problèmes, devis, rendez-vous).
+\end{itemize}
+
+\subsection{Besoins liés à la gestion des devis (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF26 - Modifier un devis}: Permettre d'ajuster les lignes de main d'œuvre et de pièces (quantités, prix, ajout/suppression de lignes). Modification possible uniquement si le devis n'est pas encore accepté par le client.
+    \item \textbf{BF27 - Valider un devis}: Verrouiller le devis après vérification (non modifiable ensuite par le gestionnaire). Déclenche la notification au client pour acceptation.
+    \item \textbf{BF28 - Recalculer automatiquement}: Mettre à jour les totaux HT, TVA, TTC après chaque modification.
+    \item \textbf{BF49 - Notifier les modifications majeures}: Si une modification du devis entraîne une variation de plus de 10\% du montant TTC, envoyer automatiquement un email de notification au client.
+\end{itemize}
+
+\subsection{Besoins liés à la gestion des statuts (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF29 - Changer le statut}: Faire progresser le dossier dans le workflow (En cours, Prêt, Clôturé).
+    \item \textbf{BF30 - Définir une ETA}: Indiquer une estimation de date/heure de fin de réparation.
+    \item \textbf{BF31 - Historiser les changements}: Conserver un log horodaté des changements de statut.
+\end{itemize}
+
+\subsection{Besoins liés à la facturation (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF32 - Générer une facture}: Créer une facture au format PDF à partir du devis validé.
+    \item \textbf{BF33 - Numérotation automatique}: Attribuer un numéro unique de facture (format FAC-YYYY-###).
+    \item \textbf{BF34 - Inclure les informations complètes}: La facture doit contenir: numéro, date d'émission, informations client, véhicule, détail des lignes, totaux HT/TVA/TTC.
+    \item \textbf{BF34 bis - Gestion des Paiements}: Enregistrement des paiements (montant, méthode: Espèces/Carte/Virement, statut) liés aux factures.
+\end{itemize}
+
+\subsection{Besoins liés à la notification (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF35 - Notifier le client par email}: Envoyer un email automatique au client lors du passage au statut "Prêt" et lors de la validation du devis.
+    \item \textbf{BF36 - Email console}: En développement, afficher l'email dans le terminal (backend console).
+    \item \textbf{BF50 - Créer une notification in-app}: À chaque changement de statut, créer une entrée dans le centre de notifications du client.
+\end{itemize}
+
+\subsection{Besoins liés à l'archivage (Gestionnaire)}
+
+\begin{itemize}
+    \item \textbf{BF37 - Clôturer un dossier}: Marquer un dossier comme terminé après paiement/livraison.
+    \item \textbf{BF38 - Archiver automatiquement}: Passer le dossier en lecture seule et le conserver pour historique.
+\end{itemize}
+
+\subsection{Besoins liés à la gestion des erreurs}
+
+\begin{itemize}
+    \item \textbf{BF51 - Erreurs de validation formulaire}: Afficher des messages d'erreur spécifiques sous chaque champ invalide, en français, indiquant clairement le problème (ex: "L'email est déjà utilisé", "Le kilométrage doit être un nombre positif").
+    \item \textbf{BF52 - Échec génération PDF}: En cas d'échec de génération d'un PDF, réessayer automatiquement une fois. Si nouvel échec, afficher un message "La génération du document a échoué. Veuillez réessayer." avec un bouton "Réessayer".
+    \item \textbf{BF53 - Échec envoi email}: Logger l'erreur dans le système, notifier le gestionnaire via le dashboard, permettre le renvoi manuel de l'email.
+    \item \textbf{BF54 - Créneau RDV devenu indisponible}: Si un créneau est réservé par un autre client pendant la navigation, afficher un message "Ce créneau vient d'être réservé. Veuillez en choisir un autre." et rafraîchir la liste des créneaux disponibles.
+    \item \textbf{BF55 - Session expirée}: Rediriger vers la page de connexion avec le message "Votre session a expiré. Veuillez vous reconnecter." et conserver l'URL de destination pour redirection post-connexion.
+\end{itemize}
+
+\subsection{Besoins liés à l'administration (Administrateur)}
+
+\begin{itemize}
+    \item \textbf{BF39 - Gérer les utilisateurs}: CRUD complet sur les comptes clients et gestionnaires.
+    \item \textbf{BF40 - Configurer les pannes}: Créer, modifier, supprimer des groupes de pannes et leurs sous-catégories.
+    \item \textbf{BF41 - Définir les barèmes}: Paramétrer les heures de main d'œuvre et les prix des pièces par défaut pour chaque sous-panne.
+    \item \textbf{BF42 - Paramétrer les tarifs}: Modifier le taux horaire de main d'œuvre et le taux de TVA.
+    \item \textbf{BF43 - Gérer les créneaux RDV}: Définir des modèles de créneaux récurrents (ex: "Tous les lundis de 9h à 10h") et gérer les exceptions (jours fériés, fermetures exceptionnelles).
+\end{itemize}
+
+\section{Besoins Non Fonctionnels}
+\label{sec:besoins-non-fonctionnels}
+
+Les besoins non fonctionnels définissent les critères de qualité et les contraintes techniques du système.
+
+\subsection{Ergonomie et accessibilité}
+
+\begin{itemize}
+    \item \textbf{BNF1 - Interface intuitive}: L'interface doit être simple, claire et ne nécessiter aucune formation particulière.
+    \item \textbf{BNF2 - Navigation fluide}: Maximum 3 clics pour accéder à une fonctionnalité principale.
+    \item \textbf{BNF3 - Messages explicites}: Afficher des messages d'erreur et de confirmation compréhensibles en français.
+    \item \textbf{BNF4 - Responsive design}: L'application doit être utilisable sur ordinateur, tablette et mobile (breakpoints: 576px, 768px, 992px, 1200px).
+    \item \textbf{BNF5 - Accessibilité}: Respecter le niveau A des WCAG 2.1 (labels sur les champs, navigation clavier, contraste minimum 4.5:1, textes alternatifs sur les images).
+\end{itemize}
+
+\subsection{Performance}
+
+\begin{itemize}
+    \item \textbf{BNF6 - Temps de réponse serveur}: Le TTFB (Time To First Byte) doit être inférieur à 500ms. Le temps de chargement complet des pages principales doit être inférieur à 2 secondes sur une connexion 4G standard (10 Mbps).
+    \item \textbf{BNF7 - Calcul de devis}: La génération d'un devis ne doit pas excéder 3 secondes.
+    \item \textbf{BNF8 - Génération PDF}: La création d'un PDF (devis ou facture) doit se faire en moins de 5 secondes.
+\end{itemize}
+
+\subsection{Sécurité}
+
+\begin{itemize}
+    \item \textbf{BNF9 - Authentification}: Utiliser le système d'authentification Django avec sessions sécurisées.
+    \item \textbf{BNF10 - Protection CSRF}: Activer la protection contre les attaques CSRF sur tous les formulaires.
+    \item \textbf{BNF11 - Validation des entrées}: Valider toutes les données saisies côté serveur (voir section Règles de validation).
+    \item \textbf{BNF12 - Isolation des données}: Un client ne peut accéder qu'à ses propres dossiers et véhicules.
+    \item \textbf{BNF13 - Politique de mots de passe}: 
+    \begin{itemize}
+        \item Complexité: minimum 8 caractères, au moins 1 majuscule, 1 minuscule, 1 chiffre
+        \item Hachage: PBKDF2 avec sel (mécanisme Django par défaut)
+        \item Expiration session: déconnexion automatique après 30 minutes d'inactivité
+        \item Verrouillage compte: après 5 tentatives de connexion échouées consécutives, compte verrouillé pendant 15 minutes
+    \end{itemize}
+    \item \textbf{BNF14 - HTTPS}: Utiliser HTTPS en production (facultatif en développement local).
+\end{itemize}
+
+\subsection{Maintenabilité et évolutivité}
+
+\begin{itemize}
+    \item \textbf{BNF15 - Code structuré}: Respecter l'architecture MVT de Django et les bonnes pratiques PEP 8.
+    \item \textbf{BNF16 - Documentation}: Fournir un README complet avec instructions d'installation et utilisation.
+    \item \textbf{BNF17 - Tests}: Écrire des tests unitaires pour les fonctions critiques (calcul devis, génération facture, validation formulaires).
+    \item \textbf{BNF18 - Modularité}: Organiser le code en applications Django distinctes par fonctionnalité.
+    \item \textbf{BNF19 - Évolutivité}: Concevoir le système pour faciliter l'ajout de nouvelles fonctionnalités.
+\end{itemize}
+
+\subsection{Fiabilité}
+
+\begin{itemize}
+    \item \textbf{BNF20 - Gestion des erreurs}: Gérer les exceptions et afficher des messages appropriés sans crash (voir BF51-55).
+    \item \textbf{BNF21 - Cohérence des données}: Garantir l'intégrité des données (contraintes, transactions).
+    \item \textbf{BNF22 - Disponibilité}: Le système doit fonctionner 24/7 en production (objectif 99\% de disponibilité).
+\end{itemize}
+
+\subsection{Règles de validation des données}
+
+Les données saisies par les utilisateurs doivent respecter les règles suivantes:
+
+\begin{table}[H]
+\centering
+\caption{Règles de validation des champs de formulaire}
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|p{6.5cm}|}
+\hline
+\textbf{Champ} & \textbf{Format} & \textbf{Contraintes} \\
+\hline
+Email & RFC 5322 & Obligatoire, unique en base, max 254 caractères \\
+\hline
+Mot de passe & Texte & Min 8 car., 1 majuscule, 1 minuscule, 1 chiffre \\
+\hline
+Nom / Prénom & Texte & Obligatoire, 2-50 caractères, lettres et tirets uniquement \\
+\hline
+Immatriculation & AA-123-AA & Regex: \texttt{\^{}[A-Z]\{2\}-[0-9]\{3\}-[A-Z]\{2\}\$}, optionnel \\
+\hline
+Surnom véhicule & Texte & Obligatoire si pas d'immatriculation, 2-30 caractères \\
+\hline
+Kilométrage & Entier & Obligatoire, > 0, max 999 999 \\
+\hline
+Année véhicule & YYYY & Obligatoire, entre 1950 et année courante \\
+\hline
+Marque / Modèle & Texte & Obligatoire, 2-50 caractères \\
+\hline
+Date CT & Date & Format JJ/MM/AAAA, optionnel, ne peut pas être dans le futur de plus d'un an \\
+\hline
+Nom assurance & Texte & Optionnel, max 100 caractères \\
+\hline
+Date échéance assurance & Date & Optionnel, format JJ/MM/AAAA \\
+\hline
+\end{tabular}
+\label{tab:validation}
+\end{table}
+
+\subsection{Conformité}
+
+\begin{itemize}
+    \item \textbf{BNF23 - RGPD}: Respecter les principes de base (collecte minimale, droit de suppression via admin, information sur l'utilisation des données à l'inscription).
+    \item \textbf{BNF24 - Archivage}: Conserver les données des dossiers clôturés pour l'historique et la comptabilité (minimum 5 ans pour conformité légale).
+\end{itemize}
+
+\section{Diagramme de Cas d'Utilisation Global}
+\label{sec:cas-utilisation}
+
+Le diagramme de cas d'utilisation (Figure~\ref{fig:use_case_global}) représente une vue d'ensemble des interactions entre les acteurs et le système. Il identifie les principales fonctionnalités accessibles à chaque type d'utilisateur.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Cas_utilisation.png}
+    \caption{Diagramme de cas d'utilisation global du système de gestion de garage}
+    \label{fig:use_case_global}
+\end{figure}
+
+\textbf{Description des principaux cas d'utilisation:}
+
+\begin{itemize}
+    \item \textbf{S'authentifier}: Tous les acteurs doivent s'authentifier pour accéder au système.
+    \item \textbf{Gérer véhicules}: Le client peut ajouter, modifier, supprimer et consulter ses véhicules.
+    \item \textbf{Déclarer problèmes}: Le client sélectionne les pannes via l'interface à boutons.
+    \item \textbf{Consulter/Télécharger devis}: Le client visualise et télécharge ses devis en PDF.
+    \item \textbf{Accepter/Refuser devis}: Le client valide ou refuse formellement le devis proposé.
+    \item \textbf{Réserver/Modifier/Annuler RDV}: Le client gère ses rendez-vous selon les conditions établies.
+    \item \textbf{Suivre statuts}: Le client consulte la timeline d'avancement de son dossier.
+    \item \textbf{Consulter notifications}: Le client accède à son centre de notifications in-app.
+    \item \textbf{Gérer dossiers}: Le gestionnaire visualise, filtre et gère tous les dossiers clients.
+    \item \textbf{Modifier/Valider devis}: Le gestionnaire ajuste et valide les devis avant intervention.
+    \item \textbf{Générer facture}: Le gestionnaire crée la facture finale au format PDF.
+    \item \textbf{Configurer système}: L'administrateur paramètre les pannes, tarifs et créneaux.
+\end{itemize}
+
+\section{Écrans Principaux de l'Application}
+\label{sec:ecrans}
+
+Les maquettes détaillées seront réalisées avec Figma durant le Sprint 0. Voici la liste des écrans à concevoir:
+
+\subsection{Écrans communs}
+\begin{itemize}
+    \item Page d'accueil / Landing page
+    \item Page de connexion
+    \item Page d'inscription (client)
+    \item Page de réinitialisation de mot de passe
+    \item Page d'erreur 404 / 500
+\end{itemize}
+
+\subsection{Espace Client}
+\begin{itemize}
+    \item Dashboard client (vue d'ensemble des dossiers)
+    \item Liste des véhicules
+    \item Formulaire ajout/modification véhicule
+    \item Interface de déclaration de problèmes (sélection par boutons)
+    \item Page de visualisation du devis (avec actions accepter/refuser)
+    \item Page de sélection de créneau RDV (calendrier)
+    \item Page de suivi du dossier (timeline)
+    \item Centre de notifications
+    \item Historique des documents
+\end{itemize}
+
+\subsection{Espace Gestionnaire}
+\begin{itemize}
+    \item Tableau de bord gestionnaire (liste des dossiers avec filtres)
+    \item Page de détail d'un dossier
+    \item Formulaire de modification de devis
+    \item Interface de changement de statut
+    \item Page de génération/visualisation de facture
+\end{itemize}
+
+\subsection{Espace Administration}
+\begin{itemize}
+    \item Interface Django Admin personnalisée
+    \item Gestion des pannes et barèmes
+    \item Gestion des créneaux RDV
+    \item Paramétrage des tarifs
+\end{itemize}
+
+\section{Backlog Produit}
+\label{sec:backlog}
+
+Le backlog produit est la liste ordonnée de toutes les fonctionnalités à développer, exprimées sous forme de user stories avec leurs critères d'acceptation. Chaque user story est estimée en termes de complexité et priorisée selon sa valeur métier.
+
+Le tableau~\ref{tab:backlog} présente l'ensemble des user stories définies pour le projet, réparties selon les trois sprints de développement.
+
+\begin{longtable}{|c|p{2cm}|p{2.5cm}|p{4cm}|p{4cm}|c|}
+\caption{Backlog produit avec critères d'acceptation} \label{tab:backlog} \\
+\hline
+\textbf{ID} & \textbf{Acteur} & \textbf{Fonctionnalité} & \textbf{User Story} & \textbf{Critères d'acceptation} & \textbf{Prio.} \\
+\hline
+\endfirsthead
+\hline
+\textbf{ID} & \textbf{Acteur} & \textbf{Fonctionnalité} & \textbf{User Story} & \textbf{Critères d'acceptation} & \textbf{Prio.} \\
+\hline
+\endhead
+\endfoot
+\hline
+\endlastfoot
+
+\multicolumn{6}{|c|}{\textbf{SPRINT 1 : Fondations \& Devis (2 semaines)}} \\
+\hline
+
+US1 & Client & Authentification & En tant que client, je veux créer un compte afin d'accéder aux services du garage. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Formulaire avec email, nom, prénom, mot de passe, confirmation\\
+$\square$ Validation des règles de complexité MDP\\
+$\square$ Email unique vérifié\\
+$\square$ Message de succès affiché\\
+$\square$ Redirection vers login
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US2 & Tous & Authentification & En tant qu'utilisateur, je veux me connecter avec mon email et mot de passe afin d'accéder à mon espace. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Formulaire email + MDP\\
+$\square$ Message d'erreur si identifiants invalides\\
+$\square$ Verrouillage après 5 échecs\\
+$\square$ Redirection selon rôle (client/gestionnaire)
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US3 & Client & Gestion véhicules & En tant que client, je veux ajouter un véhicule avec toutes ses informations afin de le déclarer au système. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Tous les champs présents\\
+$\square$ Validation selon règles (tableau 6)\\
+$\square$ Surnom obligatoire si pas d'immat\\
+$\square$ Véhicule visible dans la liste\\
+$\square$ Message de confirmation
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US4 & Client & Gestion véhicules & En tant que client, je veux consulter la liste de mes véhicules afin de les gérer. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Liste affichée avec marque, modèle, immat/surnom\\
+$\square$ Boutons modifier/supprimer visibles\\
+$\square$ Message si aucun véhicule
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US5 & Admin & Configuration & En tant qu'admin, je veux créer les groupes de pannes et sous-pannes avec barèmes afin de permettre les devis automatiques. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Interface admin accessible\\
+$\square$ CRUD groupes de pannes\\
+$\square$ CRUD sous-pannes avec heures MO et prix pièces\\
+$\square$ 8 groupes minimum créés
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US6 & Client & Déclaration problèmes & En tant que client, je veux sélectionner mon véhicule et déclarer les problèmes via des boutons afin d'obtenir un diagnostic. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Dropdown sélection véhicule\\
+$\square$ 8 groupes de pannes affichés\\
+$\square$ Sous-pannes en boutons cliquables\\
+$\square$ Changement visuel à la sélection\\
+$\square$ Bouton Valider désactivé si 0 sélection
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US7 & Système & Calcul devis & En tant que système, je dois calculer automatiquement le devis (MO + pièces) afin de fournir une estimation au client. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Calcul MO = heures × taux horaire\\
+$\square$ Somme des pièces correcte\\
+$\square$ TVA appliquée (20\%)\\
+$\square$ Totaux HT/TVA/TTC exacts\\
+$\square$ Temps < 3 secondes
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US8 & Client & Consultation devis & En tant que client, je veux visualiser mon devis détaillé (lignes, totaux HT/TVA/TTC, validité) afin de connaître le coût. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Lignes MO listées\\
+$\square$ Lignes pièces listées\\
+$\square$ Totaux affichés\\
+$\square$ Date validité = +15 jours\\
+$\square$ Boutons Accepter/Refuser visibles
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US9 & Client & Téléchargement PDF & En tant que client, je veux télécharger mon devis au format PDF afin de le conserver. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton télécharger fonctionnel\\
+$\square$ PDF généré < 5 secondes\\
+$\square$ Format A4, lisible\\
+$\square$ Toutes infos présentes\\
+$\square$ Numéro DEV-YYYY-\#\#\#
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US31 & Client & Acceptation devis & En tant que client, je veux accepter explicitement le devis afin de pouvoir réserver un RDV. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton "Accepter ce devis"\\
+$\square$ Confirmation demandée\\
+$\square$ Statut passe à "Devis accepté"\\
+$\square$ Accès RDV débloqué\\
+$\square$ Date d'acceptation enregistrée
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+\multicolumn{6}{|c|}{\textbf{SPRINT 2 : RDV \& Gestion atelier (2 semaines)}} \\
+\hline
+
+US10 & Admin & Configuration & En tant qu'admin, je veux définir des créneaux de rendez-vous types afin de gérer le planning. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Interface de création modèles récurrents\\
+$\square$ Gestion des exceptions (jours fériés)\\
+$\square$ Créneaux d'1h configurables\\
+$\square$ Plages horaires 9h-12h / 14h-17h
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US11 & Client & Réservation RDV & En tant que client, je veux consulter les créneaux disponibles afin de choisir mon rendez-vous. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Calendrier/liste des créneaux\\
+$\square$ Créneaux pris grisés\\
+$\square$ Créneaux dispo cliquables\\
+$\square$ Accès uniquement si devis accepté
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US12 & Client & Réservation RDV & En tant que client, je veux confirmer un créneau afin de réserver mon intervention. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Clic sur créneau + confirmation\\
+$\square$ Créneau marqué indisponible\\
+$\square$ Statut passe à "RDV confirmé"\\
+$\square$ Récapitulatif RDV affiché\\
+$\square$ Gestion conflit si double résa
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US32 & Client & Modification RDV & En tant que client, je veux modifier mon RDV afin de changer de créneau si besoin. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton modifier si > 24h avant\\
+$\square$ Ancien créneau libéré\\
+$\square$ Nouveau créneau réservé\\
+$\square$ Confirmation affichée
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US33 & Client & Annulation RDV & En tant que client, je veux annuler mon RDV afin de reporter mon intervention. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton annuler si > 24h avant\\
+$\square$ Demande confirmation\\
+$\square$ Créneau redevient disponible\\
+$\square$ Statut revient à "Devis accepté"
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US13 & Client & Suivi & En tant que client, je veux consulter la timeline des statuts de mon dossier afin de suivre l'avancement. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Timeline visuelle des 7 statuts\\
+$\square$ Statut actuel mis en évidence\\
+$\square$ Dates de passage affichées\\
+$\square$ ETA visible si définie
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US14 & Gestionnaire & Tableau de bord & En tant que gestionnaire, je veux visualiser tous les dossiers dans un tableau afin de gérer l'atelier. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Tableau avec colonnes: client, véhicule, statut, date\\
+$\square$ Tri par colonne\\
+$\square$ Pagination si > 20 lignes\\
+$\square$ Clic ouvre détail
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US15 & Gestionnaire & Filtrage & En tant que gestionnaire, je veux filtrer les dossiers par statut afin de prioriser mon travail. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Dropdown filtre par statut\\
+$\square$ Filtre "Tous" par défaut\\
+$\square$ Mise à jour instantanée\\
+$\square$ Compteur par statut affiché
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US16 & Gestionnaire & Gestion devis & En tant que gestionnaire, je veux consulter le détail d'un dossier et son devis afin de le vérifier. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Infos client complètes\\
+$\square$ Infos véhicule complètes\\
+$\square$ Liste problèmes déclarés\\
+$\square$ Détail devis avec lignes\\
+$\square$ Historique statuts visible
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US17 & Gestionnaire & Modification devis & En tant que gestionnaire, je veux modifier les lignes du devis (quantités, prix) afin de l'ajuster si nécessaire. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Édition inline des quantités/prix\\
+$\square$ Ajout/suppression de lignes\\
+$\square$ Recalcul auto des totaux\\
+$\square$ Possible si non accepté\\
+$\square$ Notif si variation > 10\%
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US18 & Gestionnaire & Validation devis & En tant que gestionnaire, je veux valider et verrouiller un devis afin de le soumettre au client. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton "Valider le devis"\\
+$\square$ Devis non modifiable après\\
+$\square$ Statut passe à "Devis émis"\\
+$\square$ Notification client déclenchée
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US19 & Gestionnaire & Gestion statuts & En tant que gestionnaire, je veux changer le statut d'un dossier (En cours, Prêt) afin de refléter l'avancement. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Boutons de progression\\
+$\square$ Transitions valides uniquement\\
+$\square$ Horodatage enregistré\\
+$\square$ Notification in-app créée
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US34 & Client & Notifications & En tant que client, je veux voir mes notifications afin de suivre mes dossiers sans email. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Badge compteur dans header\\
+$\square$ Centre de notifications accessible\\
+$\square$ Liste chronologique\\
+$\square$ Marquer comme lu\\
+$\square$ Lien vers dossier concerné
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+\multicolumn{6}{|c|}{\textbf{SPRINT 3 : Facture \& Clôture (2 semaines)}} \\
+\hline
+
+US20 & Gestionnaire & Facturation & En tant que gestionnaire, je veux générer une facture PDF à partir du devis validé afin de finaliser le dossier. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton "Générer facture"\\
+$\square$ PDF créé < 5 secondes\\
+$\square$ Format conforme (voir specs)\\
+$\square$ Téléchargement automatique\\
+$\square$ Copie stockée serveur
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US21 & Système & Numérotation & En tant que système, je dois attribuer un numéro unique à chaque facture (FAC-YYYY-\#\#\#) afin d'assurer la traçabilité. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Format FAC-2025-001\\
+$\square$ Incrémentation automatique\\
+$\square$ Pas de doublon possible\\
+$\square$ Reset compteur par année
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US22 & Gestionnaire & Notification & En tant que gestionnaire, je veux notifier automatiquement le client par email quand le véhicule est prêt. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Email envoyé au statut "Prêt"\\
+$\square$ Template avec infos dossier\\
+$\square$ Lien vers suivi inclus\\
+$\square$ Console en dev, SMTP en prod\\
+$\square$ Gestion échec avec retry
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US23 & Client & Historique & En tant que client, je veux accéder à l'historique de mes documents (devis, factures) afin de les retrouver facilement. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Page historique accessible\\
+$\square$ Liste des devis avec statut\\
+$\square$ Liste des factures\\
+$\square$ Téléchargement PDF possible\\
+$\square$ Tri par date
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US24 & Gestionnaire & Clôture & En tant que gestionnaire, je veux clôturer un dossier après livraison/paiement afin de l'archiver. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton clôturer (statut Prêt)\\
+$\square$ Confirmation requise\\
+$\square$ Facture doit exister\\
+$\square$ Statut passe à "Clôturé"
+\vspace{0.1cm}
+\end{minipage} & Haute \\
+\hline
+
+US25 & Gestionnaire & Archivage & En tant que gestionnaire, je veux que les dossiers clôturés soient en lecture seule afin de préserver l'historique. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Dossier clôturé = lecture seule\\
+$\square$ Aucune modification possible\\
+$\square$ Documents téléchargeables\\
+$\square$ Conservation 5 ans minimum
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US26 & Client & Gestion véhicules & En tant que client, je veux modifier ou supprimer mes véhicules afin de maintenir mes informations à jour. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Bouton modifier fonctionnel\\
+$\square$ Formulaire pré-rempli\\
+$\square$ Bouton supprimer avec confirm\\
+$\square$ Suppression logique (historique)
+\vspace{0.1cm}
+\end{minipage} & Basse \\
+\hline
+
+US27 & Développeur & Tests & En tant que développeur, je veux écrire des tests unitaires sur le calcul de devis afin de garantir la fiabilité. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Tests calcul MO\\
+$\square$ Tests calcul pièces\\
+$\square$ Tests calcul TVA\\
+$\square$ Tests cas limites (0, max)\\
+$\square$ Couverture > 80\%
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US28 & Développeur & Tests & En tant que développeur, je veux écrire des tests sur la génération de facture afin d'assurer sa conformité. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Tests numérotation\\
+$\square$ Tests contenu PDF\\
+$\square$ Tests gestion erreurs\\
+$\square$ Tests performance < 5s
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US29 & Équipe & Documentation & En tant qu'équipe, nous voulons rédiger un README complet afin de faciliter l'installation et l'utilisation. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Prérequis listés\\
+$\square$ Installation pas à pas\\
+$\square$ Création comptes de test\\
+$\square$ Lancement serveur\\
+$\square$ Captures d'écran principales
+\vspace{0.1cm}
+\end{minipage} & Moyenne \\
+\hline
+
+US30 & Admin & Configuration & En tant qu'admin, je veux paramétrer le taux horaire et la TVA via l'interface admin afin d'ajuster les tarifs. & 
+\begin{minipage}[t]{4cm}
+\vspace{0.1cm}
+$\square$ Champ taux horaire éditable\\
+$\square$ Champ taux TVA éditable\\
+$\square$ Validation valeurs positives\\
+$\square$ Effet immédiat nouveaux devis
+\vspace{0.1cm}
+\end{minipage} & Basse \\
+\hline
+
+\end{longtable}
+
+\section{Rôles Scrum}
+\label{sec:scrum}
+
+Pour la réalisation de ce projet, l'équipe de 3 étudiants adopte les rôles Scrum suivants:
+
+\begin{table}[H]
+\centering
+\caption{Répartition des rôles Scrum dans le projet}
+\begin{tabular}{|p{3.5cm}|p{10cm}|}
+\hline
+\textbf{Rôle} & \textbf{Responsabilité et personne} \\
+\hline
+
+\textbf{Product Owner} & 
+\textbf{Enseignant/Client fictif}\newline
+Définit les besoins, priorise le backlog produit, valide les livrables à chaque sprint review. \\
+\hline
+
+\textbf{Scrum Master} & 
+\textbf{Membre de l'équipe (rotation possible)}\newline
+Facilite les rituels Scrum, supprime les obstacles, veille au respect de la méthodologie, anime les réunions. \\
+\hline
+
+\textbf{Development Team} & 
+\textbf{P1 : Spécialiste Backend} – Modèles Django, calculs, génération PDF, API\newline
+\textbf{P2 : Spécialiste Frontend Client} – Templates, formulaires, interface client, CSS\newline
+\textbf{P3 : Spécialiste Gestionnaire} – Interface gestionnaire, dashboard, administration \\
+\hline
+
+\end{tabular}
+\label{tab:roles_scrum}
+\end{table}
+
+
+\textbf{Note}: Bien que chaque membre ait une spécialisation, l'entraide et la polyvalence sont encouragées. Les membres peuvent contribuer aux tâches des autres selon les besoins du sprint.
+
+\section{Planification des Sprints}
+\label{sec:planification}
+
+Le projet est divisé en 3 sprints de 2 semaines chacun, soit un total de 6 semaines de développement. Chaque sprint se termine par une démonstration fonctionnelle et une rétrospective.
+
+\begin{table}[H]
+\centering
+\caption{Planification des sprints}
+\begin{tabular}{|c|p{3cm}|p{10cm}|}
+\hline
+\textbf{Sprint} & \textbf{Période} & \textbf{Objectifs principaux} \\
+\hline
+
+\textbf{Sprint 1} &
+Semaines 1-2 &
+\makecell[l]{%
+\textbf{Fondations \& Devis}\\
+- Mise en place Django et architecture\\
+- Authentification et gestion comptes\\
+- Gestion véhicules (ajout)\\
+- Interface de déclaration (boutons pannes)\\
+- Calcul et génération devis automatique\\
+- Acceptation/refus devis par client\\
+- Téléchargement PDF devis\\[0.2em]
+\textbf{Livrable :} Parcours client fonctionnel jusqu'au devis PDF accepté} \\
+\hline
+
+\textbf{Sprint 2} &
+Semaines 3-4 &
+\makecell[l]{%
+\textbf{RDV \& Gestion atelier}\\
+- Système de rendez-vous (créneaux, réservation, annulation)\\
+- Timeline de suivi des statuts côté client\\
+- Notifications in-app\\
+- Tableau de bord gestionnaire\\
+- Filtrage et recherche de dossiers\\
+- Modification et validation de devis\\
+- Changement de statuts (workflow)\\[0.2em]
+\textbf{Livrable :} Parcours complet devis → RDV → suivi statuts} \\
+\hline
+
+\textbf{Sprint 3} &
+Semaines 5-6 &
+\makecell[l]{%
+\textbf{Facture \& Clôture}\\
+- Génération facture PDF\\
+- Numérotation automatique\\
+- Notification email (console)\\
+- Historique documents client\\
+- Clôture et archivage dossiers\\
+- Tests unitaires\\
+- Documentation README\\[0.2em]
+\textbf{Livrable :} Application complète de bout en bout} \\
+\hline
+
+\end{tabular}
+\label{tab:planning_sprints}
+\end{table}
+
+
+\textbf{Rituels Scrum appliqués:}
+
+\begin{itemize}
+    \item \textbf{Sprint Planning} (début de sprint, 1h): Sélection des user stories, estimation, répartition des tâches.
+    \item \textbf{Daily Stand-up} (chaque jour, 10 min): Point rapide sur hier/aujourd'hui/blocages.
+    \item \textbf{Sprint Review} (fin de sprint, 30 min): Démonstration des fonctionnalités au Product Owner.
+    \item \textbf{Sprint Retrospective} (fin de sprint, 20 min): Analyse du sprint, identification des points d'amélioration.
+\end{itemize}
+
+\textbf{Definition of Done (DoD):}
+
+Une user story est considérée comme terminée (Done) si:
+\begin{itemize}
+    \item La fonctionnalité est implémentée et fonctionne sans erreur
+    \item Tous les critères d'acceptation de la user story sont validés
+    \item Les validations et messages d'erreur sont en place (conformes aux BF51-55)
+    \item L'interface respecte le système de design Bootstrap et les principes WCAG 2.1 niveau A
+    \item Le code est commenté et suit les conventions PEP 8
+    \item Les tests unitaires sont écrits et passent (pour les fonctions critiques)
+    \item La documentation README est mise à jour si nécessaire
+    \item La démonstration est possible en live
+\end{itemize}
+
+\section{Architecture du Système et Environnement de Travail}
+\label{sec:architecture}
+
+Cette section détaille l'architecture logicielle et physique du système, ainsi que l'environnement de développement utilisé.
+
+\subsection{Architecture logicielle adoptée}
+
+Le système adopte l'architecture \textbf{MVT (Model-View-Template)} propre à Django, une variante du pattern MVC adaptée au développement web.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{MVT.png}
+    \caption{Architecture MVT de Django}
+    \label{fig:mvt}
+\end{figure}
+
+\textbf{Description des composants:}
+
+\begin{itemize}
+    \item \textbf{Model (Modèle)}: Représente la structure des données et la logique métier. Chaque modèle Django correspond à une table dans la base de données. Les modèles définissent les attributs, les relations et les méthodes métier.
+    
+    \item \textbf{View (Vue/Contrôleur)}: Gère la logique applicative. Les vues reçoivent les requêtes HTTP, interagissent avec les modèles, effectuent les traitements nécessaires et retournent des réponses (HTML, JSON, PDF, etc.).
+    
+    \item \textbf{Template (Gabarit)}: Responsable de la présentation. Les templates Django utilisent un langage de template pour générer dynamiquement du HTML en insérant les données fournies par les vues.
+    
+    \item \textbf{URL Router}: Fait correspondre les URLs aux vues appropriées selon les patterns définis.
+\end{itemize}
+
+\textbf{Organisation modulaire:}
+
+Le projet est organisé en plusieurs applications Django indépendantes:
+
+\begin{itemize}
+    \item \textbf{accounts}: Gestion des utilisateurs, authentification, rôles
+    \item \textbf{vehicles}: Gestion des véhicules clients
+    \item \textbf{catalog}: Configuration des pannes, barèmes, tarifs
+    \item \textbf{cases}: Dossiers, statuts, timeline
+    \item \textbf{quotes}: Devis et lignes de devis
+    \item \textbf{appointments}: Rendez-vous et créneaux
+    \item \textbf{billing}: Factures et génération PDF
+    \item \textbf{notifications}: Notifications in-app et gestion emails
+\end{itemize}
+
+\subsection{Architecture physique}
+
+L'application suit une architecture \textbf{trois tiers (3-tier)}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Physique_Trois-Tiers.png}
+    \caption{Architecture physique trois tiers}
+    \label{fig:3tiers}
+\end{figure}
+
+\textbf{Description des tiers:}
+
+\begin{enumerate}
+    \item \textbf{Tier 1 - Couche présentation (Client)}:
+    \begin{itemize}
+        \item Navigateur web moderne (Chrome, Firefox, Safari, Edge)
+        \item Interface HTML/CSS générée par les templates Django
+        \item JavaScript pour interactions dynamiques (optionnel)
+        \item Responsive design (Bootstrap ou Tailwind CSS)
+    \end{itemize}
+    
+    \item \textbf{Tier 2 - Couche application (Serveur)}:
+    \begin{itemize}
+        \item Serveur Django (développement: runserver, production: Gunicorn/uWSGI)
+        \item Traitement de la logique métier
+        \item Génération des PDF (WeasyPrint ou xhtml2pdf)
+        \item Gestion des sessions et authentification
+        \item Routage des URLs et traitement des requêtes
+    \end{itemize}
+    
+    \item \textbf{Tier 3 - Couche données (Base de données)}:
+    \begin{itemize}
+        \item SQLite en développement (fichier db.sqlite3)
+        \item PostgreSQL ou MySQL envisageable en production
+        \item ORM Django pour l'abstraction des requêtes SQL
+        \item Migrations automatiques pour évolution du schéma
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Modèle de données conceptuel}
+
+Le schéma ci-dessous présente les principales entités du système et leurs relations:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{UML.png}
+    \caption{Modèle de données conceptuel - Diagramme de classes UML}
+    \label{fig:mcd}
+\end{figure}
+
+\subsection{Environnement de développement}
+
+\subsubsection*{Environnement matériel}
+
+Le développement peut être réalisé sur tout ordinateur moderne répondant aux spécifications minimales suivantes:
+
+\begin{table}[H]
+\centering
+\caption{Configuration matérielle minimale}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Composant} & \textbf{Spécification minimale} \\
+\hline
+Processeur & Intel Core i3 / AMD Ryzen 3 ou supérieur \\
+\hline
+Mémoire RAM & 4 Go minimum (8 Go recommandé) \\
+\hline
+Stockage & 10 Go d'espace disque disponible \\
+\hline
+Système d'exploitation & Windows 10/11, macOS 10.15+, Linux (Ubuntu 20.04+) \\
+\hline
+\end{tabular}
+\label{tab:hardware}
+\end{table}
+
+\subsubsection*{Environnement logiciel}
+\begin{table}[H]
+\centering
+\caption{Technologies et outils utilisés}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Technologie/Outil} & \textbf{Version et description} \\
+\hline
+
+\textbf{Python} &
+Version 3.11 ou supérieure\newline
+Langage de programmation principal \\ \hline
+
+\textbf{Django} &
+Version 4.2 ou supérieure (LTS)\newline
+Framework web full-stack pour Python \\ \hline
+
+\textbf{SQLite} &
+Version 3 (incluse avec Python)\newline
+Base de données relationnelle légère pour le développement \\ \hline
+
+\textbf{Bootstrap / Tailwind} &
+Dernière version stable\newline
+Framework CSS pour le design responsive \\ \hline
+
+\textbf{xhtml2pdf} &
+Version 0.2+\newline
+Bibliothèque de conversion HTML vers PDF (alternative compatible Windows à WeasyPrint) \\ \hline
+
+\textbf{Git} &
+Version 2.40+\newline
+Système de contrôle de version \\ \hline
+
+\textbf{VS Code} &
+Dernière version\newline
+Éditeur de code avec extensions Python et Django \\ \hline
+
+\textbf{Figma} &
+Version web\newline
+Outil de design UI/UX pour les maquettes \\ \hline
+
+\textbf{Draw.io} &
+Version web ou desktop\newline
+Création de diagrammes UML \\ \hline
+
+\textbf{Postman} &
+Version desktop\newline
+Tests des endpoints API (si nécessaire) \\ \hline
+
+\end{tabular}
+\label{tab:software}
+\end{table}
+
+\textbf{Dépendances Python (requirements.txt):}
+
+\begin{verbatim}
+Django>=4.2
+pillow>=10.0
+xhtml2pdf>=0.2
+django-crispy-forms>=2.0
+crispy-bootstrap5>=1.0
+\end{verbatim}
+
+\section{Règles de Gestion et Calculs}
+\label{sec:regles}
+
+Cette section détaille les règles métier et les formules de calcul appliquées par le système.
+
+\subsection{Calcul du devis}
+
+Le montant d'un devis est calculé automatiquement selon les règles suivantes:
+
+\textbf{1. Main d'œuvre (MO):}
+
+\begin{equation}
+\text{MO} = \sum_{i=1}^{n} (\text{heures\_barème}_i) \times \text{taux\_horaire}
+\end{equation}
+
+Où:
+\begin{itemize}
+    \item $n$ = nombre de sous-pannes sélectionnées
+    \item heures\_barème = temps standard associé à chaque sous-panne
+    \item taux\_horaire = tarif horaire du garage (paramétrable, par défaut 60€/h)
+\end{itemize}
+
+\textbf{2. Pièces:}
+
+\begin{equation}
+\text{Pièces} = \sum_{j=1}^{m} \text{prix\_pièce\_défaut}_j
+\end{equation}
+
+Où:
+\begin{itemize}
+    \item $m$ = nombre de pièces nécessaires
+    \item prix\_pièce\_défaut = prix prédéfini pour chaque type de pièce
+\end{itemize}
+
+\textbf{3. Montant Hors Taxes (HT):}
+
+\begin{equation}
+\text{Montant HT} = \text{MO} + \text{Pièces}
+\end{equation}
+
+\textbf{4. TVA:}
+
+\begin{equation}
+\text{TVA} = \text{Montant HT} \times \text{taux\_TVA}
+\end{equation}
+
+Où taux\_TVA est paramétrable (par défaut 20\% = 0.20)
+
+\textbf{5. Montant Toutes Taxes Comprises (TTC):}
+
+\begin{equation}
+\text{Montant TTC} = \text{Montant HT} + \text{TVA}
+\end{equation}
+
+\textbf{6. Validité du devis:}
+
+\begin{equation}
+\text{Date de validité} = \text{Date d'émission} + 15 \text{ jours}
+\end{equation}
+
+\subsection{Gestion de l'expiration des devis}
+
+\begin{itemize}
+    \item Un devis non accepté après sa date de validité est marqué comme "Expiré"
+    \item Un devis expiré affiche un badge visuel "Expiré" sur l'interface client
+    \item L'acceptation d'un devis expiré est impossible (bouton désactivé)
+    \item Le client peut demander un nouveau devis pour le même véhicule (les tarifs peuvent avoir changé)
+    \item Les devis expirés sans suite sont automatiquement archivés après 30 jours
+\end{itemize}
+
+\subsection{Exemple de calcul}
+
+Client sélectionne:
+\begin{itemize}
+    \item Pneus → Usure (0.2h, 2 pneus = 200€)
+    \item Pare-brise → Fissure (1.2h, Pare-brise = 150€)
+\end{itemize}
+
+Calculs:
+\begin{itemize}
+    \item MO = (0.2 + 1.2) × 60€ = 1.4 × 60 = 84€
+    \item Pièces = 200€ + 150€ = 350€
+    \item HT = 84€ + 350€ = 434€
+    \item TVA (20\%) = 434€ × 0.20 = 86.80€
+    \item TTC = 434€ + 86.80€ = \textbf{520.80€}
+\end{itemize}
+
+\subsection{Numérotation des documents}
+
+\textbf{Devis:}
+\begin{equation}
+\text{Numéro devis} = \text{DEV-YYYY-}\text{\#\#\#}
+\end{equation}
+
+Exemple: DEV-2025-001, DEV-2025-002...
+
+\textbf{Factures:}
+\begin{equation}
+\text{Numéro facture} = \text{FAC-YYYY-}\text{\#\#\#}
+\end{equation}
+
+Exemple: FAC-2025-001, FAC-2025-002...
+
+Où YYYY = année en cours, \#\#\# = compteur séquentiel sur 3 chiffres avec zéros initiaux.
+
+\subsection{Spécifications des documents PDF}
+
+Les documents PDF (devis et factures) respectent les spécifications suivantes:
+
+\begin{table}[H]
+\centering
+\caption{Spécifications de mise en page des PDF}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Élément} & \textbf{Spécification} \\
+\hline
+Format & A4 portrait (210 × 297 mm) \\
+\hline
+Marges & 20 mm de chaque côté \\
+\hline
+Police & Arial ou équivalent sans-serif \\
+\hline
+Taille police corps & 10-11 pt \\
+\hline
+Taille police titres & 14-16 pt \\
+\hline
+\end{tabular}
+\label{tab:pdf-specs}
+\end{table}
+
+\textbf{Contenu de l'en-tête (commun devis/facture):}
+\begin{itemize}
+    \item Logo du garage (placeholder 150×50 px)
+    \item Nom du garage: "Garage Auto Express"
+    \item Adresse: 123 Avenue de la Réparation, 75001 Paris
+    \item Téléphone: 01 23 45 67 89
+    \item Email: contact@garage-auto-express.fr
+    \item SIRET: 123 456 789 00012 (fictif)
+\end{itemize}
+
+\textbf{Contenu du pied de page:}
+\begin{itemize}
+    \item Numéro de page (Page X/Y)
+    \item Mention légale: "TVA non applicable, art. 293 B du CGI" ou "TVA: FR12 123456789"
+    \item Conditions de paiement (facture uniquement)
+\end{itemize}
+
+\textbf{Corps du devis:}
+\begin{itemize}
+    \item Numéro et date d'émission
+    \item Date de validité
+    \item Informations client (nom, adresse, email, téléphone)
+    \item Informations véhicule (marque, modèle, immatriculation/surnom, kilométrage)
+    \item Tableau des lignes: description, quantité, prix unitaire HT, total HT
+    \item Récapitulatif: Total HT, TVA (taux + montant), Total TTC
+    \item Mention "Devis gratuit et sans engagement"
+\end{itemize}
+
+\textbf{Corps de la facture:}
+\begin{itemize}
+    \item Numéro et date d'émission
+    \item Référence du devis associé
+    \item Informations client et véhicule (idem devis)
+    \item Tableau des lignes (idem devis)
+    \item Récapitulatif avec totaux
+    \item Modalités de paiement: "Payable à réception"
+    \item Mention "En cas de retard de paiement, une pénalité de 3 fois le taux d'intérêt légal sera appliquée"
+\end{itemize}
+
+\subsection{Configuration et templates email}
+
+\textbf{Configuration technique:}
+\begin{itemize}
+    \item Développement: \texttt{EMAIL\_BACKEND = 'django.core.mail.backends.console.EmailBackend'}
+    \item Production: SMTP avec paramètres serveur (à configurer)
+    \item Expéditeur: noreply@garage-auto-express.fr
+\end{itemize}
+
+\textbf{Template "Devis disponible" (BF35):}
+\begin{itemize}
+    \item Objet: "[Garage Auto Express] Votre devis n°\{numero\_devis\} est prêt"
+    \item Corps: Bonjour \{prenom\}, votre devis pour \{marque\} \{modele\} est disponible. Montant TTC: \{montant\}€. Valable jusqu'au \{date\_validite\}. [Lien vers espace client]
+\end{itemize}
+
+\textbf{Template "Véhicule prêt" (BF35):}
+\begin{itemize}
+    \item Objet: "[Garage Auto Express] Votre véhicule est prêt !"
+    \item Corps: Bonjour \{prenom\}, les réparations de votre \{marque\} \{modele\} sont terminées. Vous pouvez venir récupérer votre véhicule. [Lien vers espace client]
+\end{itemize}
+
+\textbf{Template "Confirmation inscription" (BF1):}
+\begin{itemize}
+    \item Objet: "[Garage Auto Express] Bienvenue !"
+    \item Corps: Bonjour \{prenom\}, votre compte a été créé avec succès. [Lien connexion]
+\end{itemize}
+
+\textbf{Template "Réinitialisation mot de passe" (BF4):}
+\begin{itemize}
+    \item Objet: "[Garage Auto Express] Réinitialisation de votre mot de passe"
+    \item Corps: Bonjour, cliquez sur le lien suivant pour réinitialiser votre mot de passe. Ce lien expire dans 24h. [Lien reset]
+\end{itemize}
+
+\subsection{Stockage et rétention des données}
+
+\textbf{Organisation du stockage fichiers:}
+\begin{verbatim}
+/media/
+├── documents/
+│   ├── {user_id}/
+│   │   ├── devis/
+│   │   │   └── {année}/
+│   │   │       └── DEV-2025-001.pdf
+│   │   └── factures/
+│   │       └── {année}/
+│   │           └── FAC-2025-001.pdf
+│   └── ...
+└── ...
+\end{verbatim}
+
+\textbf{Politique de rétention:}
+\begin{itemize}
+    \item Devis acceptés et factures: 10 ans (obligation légale comptable française)
+    \item Devis refusés ou expirés: 2 ans puis suppression
+    \item Données personnelles des comptes inactifs: anonymisation après 3 ans d'inactivité
+    \item Logs système: 1 an
+\end{itemize}
+
+\textbf{Sauvegarde (développement):}
+\begin{itemize}
+    \item Copie quotidienne du fichier db.sqlite3
+    \item Script de backup automatique recommandé en production
+\end{itemize}
+
+\subsection{Workflow des statuts}
+
+Le dossier suit un cycle de vie strict avec les statuts suivants (dans l'ordre):
+
+\begin{enumerate}
+    \item \textbf{NOUVEAU}: Dossier créé, problèmes déclarés, devis en cours de génération
+    \item \textbf{DEVIS\_ÉMIS}: Devis généré, validé par gestionnaire, en attente d'acceptation client
+    \item \textbf{DEVIS\_ACCEPTÉ}: Client a accepté le devis, peut réserver un RDV
+    \item \textbf{RDV\_CONFIRMÉ}: Client a réservé un créneau
+    \item \textbf{EN\_COURS}: Intervention en cours dans l'atelier
+    \item \textbf{PRÊT}: Véhicule réparé, prêt pour récupération
+    \item \textbf{CLÔTURÉ}: Dossier terminé, véhicule livré, facture générée
+\end{enumerate}
+
+\textbf{Statuts alternatifs:}
+\begin{itemize}
+    \item \textbf{REFUSÉ}: Client a refusé le devis (archivage possible)
+    \item \textbf{EXPIRÉ}: Devis non accepté après date de validité
+\end{itemize}
+
+\textbf{Règles de transition:}
+\begin{itemize}
+    \item Progression normale: chaque statut ne peut évoluer que vers le suivant dans la séquence
+    \item Retour arrière autorisé: uniquement de EN\_COURS vers RDV\_CONFIRMÉ en cas d'erreur de manipulation (via gestionnaire)
+    \item Retour arrière interdit: après génération de facture, aucun retour arrière possible
+    \item Annulation RDV: fait revenir de RDV\_CONFIRMÉ à DEVIS\_ACCEPTÉ (via action client)
+\end{itemize}
+
+\section{Jeux de Données de Démonstration}
+\label{sec:fixtures}
+
+Pour faciliter les tests et la démonstration, des données de base seront créées:
+
+\subsection{Comptes utilisateurs}
+
+\begin{itemize}
+    \item \textbf{Admin}: admin@garage.com / Admin123!
+    \item \textbf{Gestionnaire}: garagiste@garage.com / Gest123!
+    \item \textbf{Client 1}: client1@example.com / Client123!
+    \item \textbf{Client 2}: client2@example.com / Client123!
+\end{itemize}
+
+\subsection{Groupes de pannes et sous-pannes}
+
+\begin{table}[H]
+\centering
+\caption{Barèmes complets des pannes configurées}
+\begin{tabular}{|p{2.5cm}|p{3.5cm}|c|p{3.5cm}|c|}
+\hline
+\textbf{Groupe} & \textbf{Sous-panne} & \textbf{Heures} & \textbf{Pièce} & \textbf{Prix} \\
+\hline
+\multirow{3}{*}{Carrosserie} & Rayure légère & 0.5h & Kit polish & 25€ \\
+\cline{2-5}
+& Bosse & 1.5h & - & 0€ \\
+\cline{2-5}
+& Peinture portière & 3.0h & Peinture & 120€ \\
+\hline
+\multirow{2}{*}{Pneus} & Usure & 0.2h & 2 pneus & 200€ \\
+\cline{2-5}
+& Vibrations & 0.3h & - & 0€ \\
+\hline
+\multirow{2}{*}{Pare-brise} & Fissure & 1.2h & Pare-brise & 150€ \\
+\cline{2-5}
+& Impact & 0.4h & Résine & 25€ \\
+\hline
+\multirow{2}{*}{Moteur} & Surchauffe & 2.0h & Thermostat & 80€ \\
+\cline{2-5}
+& Bruit anormal & 1.0h & - & 0€ \\
+\hline
+\multirow{2}{*}{Freinage} & Plaquettes usées & 1.0h & Plaquettes & 120€ \\
+\cline{2-5}
+& Disques usés & 1.5h & Disques & 180€ \\
+\hline
+\multirow{2}{*}{Électricité} & Batterie faible & 0.3h & Batterie & 100€ \\
+\cline{2-5}
+& Phare HS & 0.4h & Ampoule & 30€ \\
+\hline
+Vidange & Vidange standard & 0.5h & Huile + filtre & 45€ \\
+\hline
+\multirow{2}{*}{Climatisation} & Recharge clim & 0.5h & Gaz R134a & 60€ \\
+\cline{2-5}
+& Fuite clim & 1.5h & Joint + gaz & 90€ \\
+\hline
+\end{tabular}
+\label{tab:pannes}
+\end{table}
+
+\subsection{Créneaux de rendez-vous}
+
+\textbf{Modèle récurrent (lundi-vendredi):}
+
+Créneaux d'une heure:
+\begin{itemize}
+    \item 09:00 - 10:00
+    \item 10:00 - 11:00
+    \item 11:00 - 12:00
+    \item 14:00 - 15:00
+    \item 15:00 - 16:00
+    \item 16:00 - 17:00
+\end{itemize}
+
+\textbf{Exceptions pré-configurées:}
+\begin{itemize}
+    \item Jours fériés 2025: 1er janvier, lundi de Pâques, 1er mai, 8 mai, Ascension, lundi de Pentecôte, 14 juillet, 15 août, 1er novembre, 11 novembre, 25 décembre
+\end{itemize}
+
+\subsection{Paramètres système}
+
+\begin{itemize}
+    \item Taux horaire: 60€/h
+    \item Taux TVA: 20\%
+    \item Validité devis: 15 jours
+    \item Délai annulation RDV: 24 heures
+    \item Expiration session: 30 minutes
+    \item Tentatives connexion avant verrouillage: 5
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion-ch2}
+
+Ce chapitre a permis d'établir les fondations solides du projet en définissant précisément les acteurs, les besoins fonctionnels et non fonctionnels, ainsi que l'architecture technique. Le backlog produit structuré en 34 user stories réparties sur 3 sprints, incluant les critères d'acceptation pour chaque story, offre une feuille de route claire et testable pour le développement. 
+
+Les diagrammes UML, les spécifications détaillées des documents PDF, les templates email et les règles de validation garantissent que chaque développeur dispose des informations nécessaires pour implémenter les fonctionnalités sans ambiguïté. 
+
+L'environnement technique basé sur Django, SQLite et WeasyPrint est adapté aux objectifs du MVP. Les règles de calcul, le workflow définis et la gestion des cas d'erreur garantissent la cohérence métier et la robustesse du système. 
+
+Nous sommes maintenant prêts à démarrer le Sprint 1 avec une vision claire des objectifs à atteindre et des critères de validation pour chaque fonctionnalité.
+
+\chapter*{Conclusion Générale}
+\addcontentsline{toc}{chapter}{Conclusion Générale}
+
+Ce cahier des charges a présenté de manière exhaustive le projet de système de gestion de garage automobile, depuis la définition du contexte jusqu'à la planification détaillée du développement.
+
+Nous avons identifié une problématique concrète: la nécessité de digitaliser et d'automatiser les processus de gestion des interventions automobiles pour améliorer l'efficacité opérationnelle du garage et la satisfaction des clients. La solution proposée, une application web Django complète, répond à cette problématique en offrant des fonctionnalités adaptées aux besoins de chaque acteur (clients, gestionnaires, administrateurs).
+
+Le choix de la méthodologie Agile Scrum assure une approche itérative et flexible, particulièrement adaptée à notre contexte de projet académique avec une équipe réduite. La planification en 3 sprints de 2 semaines permet des livraisons progressives et une validation continue des fonctionnalités développées grâce aux critères d'acceptation définis pour chaque user story.
+
+L'architecture MVT de Django, combinée à une organisation modulaire en applications indépendantes, garantit la maintenabilité et l'évolutivité du système. Les spécifications détaillées des besoins fonctionnels et non fonctionnels, les règles de validation des données, les templates de documents PDF et d'emails, ainsi que les règles de gestion clairement définies, constituent un guide précis et non ambigu pour l'implémentation.
+
+Les prochaines étapes consisteront à réaliser les sprints planifiés, en commençant par le Sprint 1 qui établira les fondations du système (authentification, gestion véhicules, déclaration problèmes, génération devis avec acceptation client). Chaque sprint se conclura par une démonstration fonctionnelle validant les critères d'acceptation et une rétrospective pour améliorer continuellement nos pratiques.
+
+Ce projet représente une opportunité de mettre en pratique les compétences acquises en développement web, conception de systèmes d'information, gestion de projet Agile et travail en équipe. Il démontre également notre capacité à analyser un besoin réel, à proposer une solution technique appropriée et à la réaliser de manière professionnelle.
+
+Nous sommes confiants que ce système apportera une réelle valeur ajoutée aux garages automobiles en modernisant leur gestion et en offrant une expérience client optimale.
+
+\begin{thebibliography}{9}
+
+\bibitem{django}
+Django Software Foundation, \textit{Django Documentation}.\\
+Consulté en janvier 2025.\\
+\url{https://docs.djangoproject.com/}
+
+\bibitem{scrum}
+Scrum.org, \textit{The Scrum Guide}.\\
+Consulté en janvier 2025.\\
+\url{https://www.scrum.org/resources/scrum-guide}
+
+\bibitem{uml}
+Object Management Group, \textit{Unified Modeling Language (UML)}.\\
+Consulté en janvier 2025.\\
+\url{https://www.uml.org/}
+
+\bibitem{xhtml2pdf}
+xhtml2pdf Documentation, \textit{HTML to PDF converter}.\\
+Consulté en janvier 2025.\\
+\url{https://github.com/xhtml2pdf/xhtml2pdf}
+
+\bibitem{bootstrap}
+Bootstrap Team, \textit{Bootstrap Framework Documentation}.\\
+Consulté en janvier 2025.\\
+\url{https://getbootstrap.com/}
+
+\bibitem{agile}
+Agile Alliance, \textit{Agile Manifesto and Principles}.\\
+Consulté en janvier 2025.\\
+\url{https://www.agilealliance.org/}
+
+\bibitem{wcag}
+W3C, \textit{Web Content Accessibility Guidelines (WCAG) 2.1}.\\
+Consulté en janvier 2025.\\
+\url{https://www.w3.org/TR/WCAG21/}
+
+\end{thebibliography}
+
+\end{document}

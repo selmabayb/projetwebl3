@@ -1,0 +1,32 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Confirmation d'annulation de rendez-vous</h2>
+
+<p>Bonjour {{ client.get_full_name|default:client.username }},</p>
+
+<p>Nous confirmons l'annulation de votre rendez-vous :</p>
+
+<div class="info-box">
+    <strong>📅 Date :</strong> {{ appointment.date|date:"l d F Y" }}<br>
+    <strong>🕐 Heure :</strong> {{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}<br>
+    <strong>🚗 Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>📋 Dossier :</strong> #{{ case.id }}
+</div>
+
+{% if appointment.cancellation_reason %}
+<p><strong>Motif :</strong> {{ appointment.cancellation_reason }}</p>
+{% endif %}
+
+<p>Le statut de votre dossier est revenu à "Devis accepté". Vous pouvez réserver un nouveau rendez-vous quand vous le souhaitez.</p>
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/cases/{{ case.pk }}/" class="button">
+        Réserver un nouveau RDV
+    </a>
+</p>
+
+<p>Nous espérons vous revoir bientôt.</p>
+
+<p>Cordialement,<br>L'équipe du Garage Auto</p>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Valider et émettre - Devis {{ quote.quote_number|default:"Brouillon" }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_list' %}">Tous les Devis</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_detail' quote.pk %}">
+                    Devis {{ quote.quote_number|default:"Brouillon" }}
+                </a></li>
+                <li class="breadcrumb-item active">Valider et émettre</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-check-circle"></i> Valider et émettre le devis
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Action irréversible :</strong> Une fois validé et émis, ce devis sera envoyé au client et ne pourra plus être modifié. Vérifiez bien toutes les informations avant de continuer.
+                </div>
+
+                <!-- Récapitulatif du devis -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Récapitulatif</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 30%;">Client</th>
+                                <td>{{ quote.case.client.get_full_name|default:quote.case.client.username }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ quote.case.client.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Dossier</th>
+                                <td>#{{ quote.case.id }} - {{ quote.case.vehicle }}</td>
+                            </tr>
+                            <tr>
+                                <th>Nombre de lignes</th>
+                                <td>{{ quote_lines.count }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total HT</th>
+                                <td>{{ quote.total_ht|floatformat:2 }} €</td>
+                            </tr>
+                            <tr>
+                                <th>TVA ({{ quote.tva_rate }}%)</th>
+                                <td>{{ quote.total_tva|floatformat:2 }} €</td>
+                            </tr>
+                            <tr class="table-light">
+                                <th><strong>Total TTC</strong></th>
+                                <td><strong class="fs-5 text-primary">{{ quote.total_ttc|floatformat:2 }} €</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Validité</th>
+                                <td>{{ quote.validity_days }} jours</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Détail des lignes -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Lignes du devis</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if quote_lines %}
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th class="text-end">Qté</th>
+                                            <th class="text-end">P.U. HT</th>
+                                            <th class="text-end">Total HT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for line in quote_lines %}
+                                        <tr>
+                                            <td>{{ line.description }}</td>
+                                            <td class="text-end">{{ line.quantity|floatformat:2 }}</td>
+                                            <td class="text-end">{{ line.unit_price_ht|floatformat:2 }} €</td>
+                                            <td class="text-end">{{ line.total_ht|floatformat:2 }} €</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>Attention :</strong> Le devis ne contient aucune ligne. Vous devez ajouter au moins une ligne avant de pouvoir le valider.
+                            </div>
+                            <a href="{% url 'quotes:quote_edit_lines' quote.pk %}" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Ajouter des lignes
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if quote_lines %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            {{ form.notes.label }}
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">{{ form.notes.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Vous pouvez ajouter ou modifier des notes avant l'émission.
+                        </small>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i>
+                        <strong>Que va-t-il se passer ?</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Le devis recevra un numéro unique (DEV-{{ now|date:"Y" }}-###)</li>
+                            <li>Le statut du devis passera à "Émis"</li>
+                            <li>Le statut du dossier passera à "Devis émis"</li>
+                            <li>Le client recevra une notification par email</li>
+                            <li>Le devis sera consultable par le client</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-send"></i> Valider et émettre le devis
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

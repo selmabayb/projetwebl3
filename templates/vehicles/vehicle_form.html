@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if form.instance.pk %}Modifier le véhicule{% else %}Ajouter un véhicule{% endif %} - GaragePlus
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'vehicles:vehicle_list' %}">Mes Véhicules</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {% if form.instance.pk %}Modification{% else %}Ajout{% endif %}
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">
+                    {% if form.instance.pk %}
+                    <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Modifier le véhicule
+                    {% else %}
+                    <i class="fa-solid fa-plus text-primary me-2"></i> Nouveau Véhicule
+                    {% endif %}
+                </h3>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-warning">
+                        <h6 class="fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i> Erreurs dans le
+                            formulaire :</h6>
+                        <ul class="mb-0 small">
+                            {% for field, errors in form.errors.items %}
+                            <li><strong>{{ field|title }}</strong>: {{ errors|striptags }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Marque</label>
+                            {{ form.brand }}
+                            {{ form.brand.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Modèle</label>
+                            {{ form.model }}
+                            {{ form.model.errors }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Année</label>
+                            {{ form.year }}
+                            {{ form.year.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Kilométrage</label>
+                            <div class="input-group">
+                                {{ form.mileage }}
+                                <span class="input-group-text">km</span>
+                            </div>
+                            {{ form.mileage.errors }}
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="my-2 opacity-10">
+                            <p class="small text-secondary mb-3"><i class="fa-solid fa-circle-info me-1"></i> Remplissez
+                                l'immatriculation OU le surnom.</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Immatriculation</label>
+                            {{ form.plate_number }}
+                            <div class="form-text small">Ex: AA-123-AA</div>
+                            {{ form.plate_number.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Surnom</label>
+                            {{ form.nickname }}
+                            {{ form.nickname.errors }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Carburant</label>
+                            {{ form.fuel_type }}
+                            {{ form.fuel_type.errors }}
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="my-2 opacity-10">
+                            <h6 class="small fw-bold text-primary mb-3">Informations Complémentaires</h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Dernier Contrôle Tech.</label>
+                            {{ form.last_technical_inspection }}
+                            {{ form.last_technical_inspection.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Spacer -->
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Assurance</label>
+                            {{ form.insurance_company }}
+                            {{ form.insurance_company.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Échéance Assurance</label>
+                            {{ form.insurance_expiry_date }}
+                            {{ form.insurance_expiry_date.errors }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-secondary">Notes</label>
+                            {{ form.notes }}
+                            {{ form.notes.errors }}
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary fw-bold px-4 shadow-sm">
+                                    Enregistrer
+                                </button>
+                                <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-light tex-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add form-control class to all inputs
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.classList.add('form-control');
+        // Fix specific widgets if needed
+        if (el.type === 'checkbox') {
+            el.classList.replace('form-control', 'form-check-input');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Fixer un rendez-vous</h2>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Date :</label><br>
+    <input type="date" name="date" required><br><br>
+
+    <label>Heure :</label><br>
+    <input type="time" name="hour" required><br><br>
+
+    <button type="submit">Confirmer le rendez-vous</button>
+</form>
+
+{% endblock %}

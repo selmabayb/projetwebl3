@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Dossier #{{ case.id }} - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'cases:case_list' %}">Mes Dossiers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Dossier #{{ case.id }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5 mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Dossier #{{ case.id }}</h2>
+                        <p class="text-secondary mb-0">Créé le {{ case.created_at|date:"d F Y à H:i" }}</p>
+                    </div>
+                    <span
+                        class="badge {% if case.status == 'NOUVEAU' %}bg-primary{% elif case.status == 'EN_COURS' %}bg-warning{% elif case.status == 'CLOTURE' %}bg-success{% else %}bg-secondary{% endif %} fs-6 px-3 py-2 rounded-pill">
+                        {{ case.get_status_display }}
+                    </span>
+                </div>
+
+                <h5 class="fw-bold text-primary mt-4 mb-3"><i class="fa-solid fa-car me-2"></i> Véhicule</h5>
+                <div class="bg-light rounded-3 p-3 mb-4">
+                    <p class="fw-bold mb-1">{{ case.vehicle.brand }} {{ case.vehicle.model }} ({{ case.vehicle.year }})
+                    </p>
+                    <p class="text-secondary small mb-0">
+                        {{ case.vehicle.get_identifier }} • {{ case.vehicle.mileage }} km
+                    </p>
+                </div>
+
+                <h5 class="fw-bold text-primary mt-4 mb-3"><i class="fa-solid fa-comment-dots me-2"></i> Description
+                </h5>
+                <div class="p-3 border rounded-3 bg-white">
+                    <p class="mb-0">{{ case.description }}</p>
+                </div>
+
+                <h5 class="fw-bold text-primary mt-4 mb-3"><i class="fa-solid fa-triangle-exclamation me-2"></i> Pannes
+                    Identifiées</h5>
+                {% if case_faults %}
+                <ul class="list-group mb-3">
+                    {% for fault in case_faults %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">{{ fault.name }}</span>
+                            <small class="d-block text-secondary">{{ fault.description|truncatechars:50 }}</small>
+                        </div>
+                        {% if can_add_faults %}
+                        <form action="{% url 'cases:case_remove_fault' case.pk fault.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i
+                                    class="fa-solid fa-times"></i></button>
+                        </form>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted fst-italic">Aucune panne spécifique sélectionnée.</p>
+                {% endif %}
+
+                {% if can_add_faults %}
+                <a href="{% url 'cases:case_add_faults' case.pk %}" class="btn btn-primary btn-sm rounded-pill px-3">
+                    <i class="fa-solid fa-magnifying-glass-plus me-2"></i> Ajouter/Modifier des pannes
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar / Timeline -->
+        <div class="col-lg-4">
+            <!-- Manager Actions -->
+            {% if user.profile.role != 'CLIENT' %}
+            <div class="glass-card p-4 mb-4 border-start border-4 border-warning">
+                <h5 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-lock me-2"></i> Espace Gestion</h5>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cases:case_update_status' case.pk %}" class="btn btn-outline-dark btn-sm fw-bold">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Changer le statut
+                    </a>
+                    {% if case.status == 'NOUVEAU' %}
+                    {% if not case.quote %}
+                    <a href="{% url 'quotes:quote_create' case.pk %}" class="btn btn-warning btn-sm fw-bold">
+                        <i class="fa-solid fa-file-invoice-dollar me-2"></i> Créer devis
+                    </a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Client Actions -->
+            {% if user.profile.role == 'CLIENT' and case.status == 'DEVIS_ACCEPTE' %}
+            <div class="glass-card p-4 mb-4 border-start border-4 border-success">
+                <h5 class="fw-bold mb-3 text-success"><i class="fa-solid fa-check-circle me-2"></i> Prêt pour
+                    intervention</h5>
+                <p class="small text-secondary mb-3">Votre devis a été accepté. Vous pouvez maintenant planifier votre
+                    venue.</p>
+                <div class="d-grid">
+                    <a href="{% url 'appointments:appointment_create' case.pk %}"
+                        class="btn btn-success fw-bold shadow-sm">
+                        <i class="fa-solid fa-calendar-plus me-2"></i> Prendre Rendez-vous
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4">Historique</h5>
+                <div class="timeline border-start border-2 ps-3 border-primary border-opacity-25"
+                    style="margin-left: 10px;">
+                    {% for log in status_history %}
+                    <div class="mb-4 position-relative">
+                        <div class="position-absolute start-0 top-0 translate-middle rounded-circle bg-primary"
+                            style="width: 12px; height: 12px; margin-left: -17px; margin-top: 6px;"></div>
+                        <p class="fw-bold mb-0 text-dark">{{ log.get_new_status_display }}</p>
+                        <small class="text-secondary d-block mb-1">{{ log.changed_at|date:"d/m/Y H:i" }}</small>
+                        <small class="text-muted fst-italic">Par {{ log.changed_by.username }}</small>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small">Aucun historique disponible.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

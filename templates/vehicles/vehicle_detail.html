@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails du Véhicule - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'vehicles:vehicle_list' %}"
+                            class="text-decoration-none">Mes Véhicules</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ vehicle.brand }} {{ vehicle.model }}</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="fw-bold mb-0">Détails du Véhicule</h1>
+                <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="fa-solid fa-arrow-left me-2"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Vehicle Details -->
+        <div class="col-md-5 col-lg-4">
+            <div class="glass-card p-4 h-100 position-relative">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                        style="width: 80px; height: 80px;">
+                        <i class="fa-solid fa-car fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold">{{ vehicle.brand }} {{ vehicle.model }}</h3>
+                    <p class="text-secondary">{{ vehicle.get_identifier }}</p>
+                    {% if vehicle.is_active %}
+                    <span
+                        class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill">Actif</span>
+                    {% else %}
+                    <span
+                        class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2 rounded-pill">Inactif</span>
+                    {% endif %}
+                </div>
+
+                <div class="border-top border-light pt-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Kilométrage</span>
+                        <span class="fw-bold">{{ vehicle.mileage }} km</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Année</span>
+                        <span class="fw-bold">{{ vehicle.year }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Carburant</span>
+                        <span class="fw-bold">{{ vehicle.get_fuel_type_display }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Immatriculation</span>
+                        <span class="fw-bold">{{ vehicle.plate_number|default:"-" }}</span>
+                    </div>
+                    {% if vehicle.nickname %}
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Surnom</span>
+                        <span class="fw-bold">{{ vehicle.nickname }}</span>
+                    </div>
+                    {% endif %}
+                    {% if vehicle.last_technical_inspection %}
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Dernier CT</span>
+                        <span class="fw-bold">{{ vehicle.last_technical_inspection|date:"d/m/Y" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if vehicle.insurance_company %}
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Assurance</span>
+                        <span class="fw-bold">{{ vehicle.insurance_company }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'vehicles:vehicle_update' vehicle.pk %}" class="btn btn-primary rounded-pill">
+                        <i class="fa-solid fa-pen me-2"></i> Modifier
+                    </a>
+                    {% if vehicle.is_active %}
+                    <form action="{% url 'vehicles:vehicle_delete' vehicle.pk %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger rounded-pill"
+                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')">
+                            <i class="fa-solid fa-trash me-2"></i> Supprimer
+                        </button>
+                    </form>
+                    {% else %}
+                    <form action="{% url 'vehicles:vehicle_activate' vehicle.pk %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success rounded-pill"
+                            onclick="return confirm('Êtes-vous sûr de vouloir réactiver ce véhicule ?')">
+                            <i class="fa-solid fa-rotate-left me-2"></i> Réactiver
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="col-md-7 col-lg-8">
+            <div class="glass-card p-4 h-100">
+                <h4 class="fw-bold mb-4"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Historique</h4>
+
+                {% if history %}
+                <div class="timeline">
+                    {% for event in history %}
+                    <div class="timeline-item pb-4 border-start border-2 ps-4 position-relative border-primary border-opacity-25"
+                        style="margin-left: 10px;">
+                        <div class="position-absolute top-0 start-0 translate-middle rounded-circle bg-white border border-primary border-2 d-flex align-items-center justify-content-center"
+                            style="width: 20px; height: 20px;">
+                            <div class="rounded-circle bg-primary" style="width: 8px; height: 8px;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0">{{ event.get_event_type_display }}</h6>
+                            <small class="text-secondary">{{ event.event_date|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="text-secondary small mb-0">{{ event.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-secondary">
+                    <i class="fa-solid fa-clipboard-list fa-3x mb-3 opacity-25"></i>
+                    <p>Aucun historique disponible pour ce véhicule.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

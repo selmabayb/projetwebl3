@@ -1,0 +1,37 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>🔔 Rappel : Votre rendez-vous est demain</h2>
+
+<p>Bonjour {{ client.get_full_name|default:client.username }},</p>
+
+<p>Nous vous rappelons que vous avez un rendez-vous <strong>demain</strong> :</p>
+
+<div class="info-box" style="border-color: #ff9800;">
+    <strong>📅 Date :</strong> {{ appointment.date|date:"l d F Y" }}<br>
+    <strong>🕐 Heure :</strong> {{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}<br>
+    <strong>🚗 Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>📋 Dossier :</strong> #{{ case.id }}
+</div>
+
+<p><strong>Adresse du garage :</strong><br>
+123 Rue de l'Automobile<br>
+75000 Paris</p>
+
+<p><strong>N'oubliez pas :</strong></p>
+<ul>
+    <li>✓ Arrivez 10 minutes avant l'heure du rendez-vous</li>
+    <li>✓ Apportez vos papiers du véhicule</li>
+    <li>✓ En cas d'empêchement, prévenez-nous au plus tôt</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/appointments/{{ appointment.pk }}/" class="button">
+        Voir mon rendez-vous
+    </a>
+</p>
+
+<p>À demain !</p>
+
+<p>L'équipe du Garage Auto</p>
+{% endblock %}

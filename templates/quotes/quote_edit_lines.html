@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Éditer le devis - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="glass-card p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0">Éditer les lignes du devis {{ quote.quote_number }}</h3>
+            <span class="badge bg-secondary">{{ quote.get_status_display }}</span>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ formset.management_form }}
+
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 40%">Description</th>
+                            <th>Type</th>
+                            <th style="width: 10%">Qté</th>
+                            <th>Prix U. / Taux</th>
+                            <th>Heures (MO)</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>
+                                {{ form.id }}
+                                {{ form.description }}
+                                {{ form.description.errors }}
+                            </td>
+                            <td>
+                                {{ form.line_type }}
+                            </td>
+                            <td>
+                                {{ form.quantity }}
+                            </td>
+                            <td>
+                                {{ form.unit_price_ht }} / {{ form.hourly_rate }}
+                            </td>
+                            <td>
+                                {{ form.hours }}
+                            </td>
+                            <td class="text-center">
+                                {{ form.DELETE }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-outline-secondary">
+                    Annuler (retour détail)
+                </a>
+                <button type="submit" class="btn btn-primary fw-bold px-4">
+                    Enregistrer les modifications
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('input[type="text"], input[type="number"], select').forEach(el => el.classList.add('form-control', 'form-control-sm'));
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.classList.add('form-check-input'));
+</script>
+{% endblock %}

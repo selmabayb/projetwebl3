@@ -1,0 +1,39 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>📋 Mise à jour de votre dossier</h2>
+
+<p>Bonjour {{ client.get_full_name|default:client.username }},</p>
+
+<p>Le statut de votre dossier a été mis à jour :</p>
+
+<div class="info-box">
+    <strong>📋 Dossier :</strong> #{{ case.id }}<br>
+    <strong>🚗 Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>📊 Nouveau statut :</strong> <span style="font-size: 16px; color: #0066cc;">{{ new_status_display }}</span>
+</div>
+
+{% if new_status == 'DEVIS_EMIS' %}
+<p>Un devis a été émis pour votre dossier. Vous pouvez le consulter et l'accepter ou le refuser depuis votre espace client.</p>
+{% elif new_status == 'DEVIS_ACCEPTE' %}
+<p>Votre devis a été accepté. Vous pouvez maintenant réserver un rendez-vous pour la réparation.</p>
+{% elif new_status == 'RDV_CONFIRME' %}
+<p>Votre rendez-vous a été confirmé. Nous vous attendons à la date et l'heure prévues.</p>
+{% elif new_status == 'EN_COURS' %}
+<p>Votre véhicule est actuellement en cours de réparation. Nous vous tiendrons informé de l'avancement.</p>
+{% elif new_status == 'PRET' %}
+<p>Votre véhicule est prêt ! Vous pouvez venir le récupérer dès maintenant.</p>
+{% elif new_status == 'CLOTURE' %}
+<p>Votre dossier a été clôturé. Merci de votre confiance !</p>
+{% endif %}
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/cases/{{ case.pk }}/" class="button">
+        Voir mon dossier
+    </a>
+</p>
+
+<p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+
+<p>Cordialement,<br>L'équipe du Garage Auto</p>
+{% endblock %}

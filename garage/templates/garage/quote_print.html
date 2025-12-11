@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Devis (version imprimable)</h2>
+
+<p>Valable jusqu’au : {{ quote.valid_until }}</p>
+
+<table class="table">
+    <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Qté</th>
+        <th>PU HT</th>
+        <th>Total</th>
+    </tr>
+    {% for line in lines %}
+    <tr>
+        <td>{{ line.type }}</td>
+        <td>{{ line.label }}</td>
+        <td>{{ line.qty }}</td>
+        <td>{{ line.unit_price_ht }} €</td>
+        <td>{{ line.qty|floatformat:2|add:""|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Total main d’œuvre : {{ quote.total_mo }} €</h4>
+<h4>Total pièces : {{ quote.total_parts }} €</h4>
+<h3>Total : {{ quote.total_price }} €</h3>
+
+<script>
+    window.print();
+</script>
+{% endblock %}

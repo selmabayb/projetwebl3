@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>✅ Devis accepté par le client</h2>
+
+<p>Bonjour,</p>
+
+<p>Le client <strong>{{ client.get_full_name|default:client.username }}</strong> a accepté le devis <strong>{{ quote.quote_number }}</strong>.</p>
+
+<div class="info-box">
+    <strong>Devis :</strong> {{ quote.quote_number }}<br>
+    <strong>Client :</strong> {{ client.get_full_name|default:client.username }} ({{ client.email }})<br>
+    <strong>Dossier :</strong> #{{ case.id }}<br>
+    <strong>Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>Montant TTC :</strong> {{ quote.total_ttc|floatformat:2 }} €<br>
+    <strong>Date d'acceptation :</strong> {{ quote.acceptance_date|date:"d/m/Y à H:i" }}
+</div>
+
+<p><strong>Action requise :</strong> Le client peut maintenant réserver un rendez-vous. Assurez-vous que des créneaux sont disponibles.</p>
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/quotes/{{ quote.pk }}/" class="button">
+        Voir le devis
+    </a>
+</p>
+
+<p>Cordialement,<br>Système de Gestion Garage</p>
+{% endblock %}

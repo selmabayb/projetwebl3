@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des véhicules</title>
+</head>
+<body>
+    <h1>Liste des véhicules</h1>
+
+    {% if vehicles %}
+        <ul>
+            {% for v in vehicles %}
+                <li>
+                    {{ v.marque }} {{ v.modele }} - {{ v.immatriculation }}
+                    ({{ v.type }}) - {{ v.kilometrage }} km
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun véhicule pour le moment.</p>
+    {% endif %}
+</body>
+</html>

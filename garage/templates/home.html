@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - Garage Auto{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-3 mb-4">
+        <i class="bi bi-car-front-fill text-primary"></i> Bienvenue au Garage Auto
+    </h1>
+    <p class="lead mb-5">Votre plateforme de gestion de réparations automobile</p>
+
+    {% if user.is_authenticated %}
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-car-front text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Mes Véhicules</h5>
+                        <p class="card-text">Gérez vos véhicules</p>
+                        <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-primary">
+                            Accéder <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-folder text-success" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Mes Dossiers</h5>
+                        <p class="card-text">Déclarez vos problèmes</p>
+                        <a href="{% url 'cases:case_list' %}" class="btn btn-success">
+                            Accéder <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-text text-warning" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Mes Devis</h5>
+                        <p class="card-text">Consultez vos devis</p>
+                        <a href="{% url 'quotes:quote_list' %}" class="btn btn-warning">
+                            Accéder <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-check text-info" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Mes Rendez-vous</h5>
+                        <p class="card-text">Gérez vos RDV</p>
+                        <a href="{% url 'appointments:appointment_list' %}" class="btn btn-info">
+                            Accéder <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mx-auto" style="max-width: 800px;">
+            <h5><i class="bi bi-info-circle"></i> Comment ça marche ?</h5>
+            <ol class="text-start mb-0">
+                <li><strong>Créez un dossier</strong> pour déclarer un problème sur votre véhicule</li>
+                <li><strong>Sélectionnez les pannes</strong> depuis notre catalogue</li>
+                <li><strong>Recevez un devis</strong> par email avec le détail des réparations</li>
+                <li><strong>Acceptez le devis</strong> et réservez un rendez-vous</li>
+                <li><strong>Venez au garage</strong> à la date prévue</li>
+            </ol>
+        </div>
+    {% else %}
+        <div class="mb-5">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-3">
+                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+            </a>
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-gear"></i> Administration
+            </a>
+        </div>
+
+        <div class="row g-4 mt-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-speedometer2 text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Rapide</h5>
+                        <p class="card-text">Déclarez votre problème en quelques clics</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Sécurisé</h5>
+                        <p class="card-text">Vos données sont protégées</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-info">
+                    <div class="card-body text-center">
+                        <i class="bi bi-envelope text-info" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Notifié</h5>
+                        <p class="card-text">Recevez des emails à chaque étape</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <h3><i class="bi bi-tools text-primary"></i></h3>
+                <h5>Services Complets</h5>
+                <p>Mécanique, électronique, carrosserie et plus</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <h3><i class="bi bi-people text-primary"></i></h3>
+                <h5>Équipe Qualifiée</h5>
+                <p>Techniciens certifiés et expérimentés</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <h3><i class="bi bi-clock text-primary"></i></h3>
+                <h5>Disponibilité</h5>
+                <p>Ouvert du lundi au samedi</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

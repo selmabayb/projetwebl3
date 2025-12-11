@@ -1,0 +1,36 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>❌ Devis refusé par le client</h2>
+
+<p>Bonjour,</p>
+
+<p>Le client <strong>{{ client.get_full_name|default:client.username }}</strong> a refusé le devis <strong>{{ quote.quote_number }}</strong>.</p>
+
+<div class="info-box">
+    <strong>Devis :</strong> {{ quote.quote_number }}<br>
+    <strong>Client :</strong> {{ client.get_full_name|default:client.username }} ({{ client.email }})<br>
+    <strong>Dossier :</strong> #{{ case.id }}<br>
+    <strong>Véhicule :</strong> {{ case.vehicle }}<br>
+    <strong>Montant TTC :</strong> {{ quote.total_ttc|floatformat:2 }} €
+</div>
+
+{% if refusal_reason %}
+<p><strong>Motif du refus :</strong></p>
+<div class="info-box">
+    {{ refusal_reason }}
+</div>
+{% else %}
+<p><em>Le client n'a pas indiqué de motif de refus.</em></p>
+{% endif %}
+
+<p><strong>Action suggérée :</strong> Vous pouvez contacter le client pour discuter d'éventuels ajustements au devis.</p>
+
+<p style="text-align: center;">
+    <a href="http://localhost:8000/quotes/{{ quote.pk }}/" class="button">
+        Voir le devis
+    </a>
+</p>
+
+<p>Cordialement,<br>Système de Gestion Garage</p>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouveau Dossier - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'cases:case_list' %}">Mes Dossiers</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Nouveau</li>
+                </ol>
+            </nav>
+
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">
+                    <i class="fa-solid fa-screwdriver-wrench text-primary me-2"></i> Déclarer un problème
+                </h3>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">Véhicule concerné</label>
+                        {{ form.vehicle }}
+                        {% if form.vehicle.errors %}
+                        <div class="text-danger small">{{ form.vehicle.errors }}</div>
+                        {% endif %}
+                        <div class="form-text small">
+                            Votre véhicule n'est pas dans la liste ? <a
+                                href="{% url 'vehicles:vehicle_create' %}">Ajoutez-le ici</a>.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">Description du problème</label>
+                        {{ form.description }}
+                        <div class="form-text small">Décrivez les symptômes (bruit, fumée, voyant...)</div>
+                        {{ form.description.errors }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Urgence</label>
+                        {{ form.urgency_level }}
+                        {{ form.urgency_level.errors }}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                            Suivant <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.classList.add('form-control');
+        el.classList.add('form-select'); // Basic brute force, cleaner in real app
+    });
+    // Remove form-select from textarea/inputs to avoid styling issues
+    document.querySelectorAll('input, textarea').forEach(el => {
+        el.classList.remove('form-select');
+    });
+</script>
+{% endblock %}

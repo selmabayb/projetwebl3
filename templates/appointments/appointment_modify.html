@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier le Rendez-vous - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'appointments:appointment_list' %}">Mes Rendez-vous</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appointments:appointment_detail' appointment.pk %}">
+                    RDV du {{ appointment.date|date:"d/m/Y" }}
+                </a></li>
+                <li class="breadcrumb-item active">Modifier</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card border-warning">
+            <div class="card-header bg-warning">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-pencil-square"></i> Modifier le rendez-vous
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Rendez-vous actuel:</strong><br>
+                    {{ appointment.date|date:"l d F Y" }} à {{ appointment.start_time|time:"H:i" }}<br>
+                    <strong>Dossier:</strong> #{{ appointment.case.id }} - {{ appointment.case.vehicle }}
+                </div>
+
+                <form method="post" novalidate id="modify-form">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.date.id_for_label }}" class="form-label">
+                            {{ form.date.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.date }}
+                        {% if form.date.errors %}
+                            <div class="invalid-feedback d-block">{{ form.date.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Sélectionnez une nouvelle date (minimum 24h à l'avance).
+                        </small>
+                    </div>
+
+                    <div class="mb-3" id="slot-container" style="display: none;">
+                        <label for="{{ form.slot.id_for_label }}" class="form-label">
+                            {{ form.slot.label }} <span class="text-danger">*</span>
+                        </label>
+                        <select name="slot" id="id_slot" class="form-select">
+                            <option value="">Chargement des créneaux...</option>
+                        </select>
+                        {% if form.slot.errors %}
+                            <div class="invalid-feedback d-block">{{ form.slot.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Sélectionnez un nouveau créneau horaire.
+                        </small>
+                    </div>
+
+                    <div id="loading-message" class="alert alert-info" style="display: none;">
+                        <i class="bi bi-hourglass-split"></i> Chargement des créneaux disponibles...
+                    </div>
+
+                    <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attention:</strong> Cette modification remplacera votre rendez-vous actuel.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'appointments:appointment_detail' appointment.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-warning" id="submit-btn" disabled>
+                            <i class="bi bi-check-circle"></i> Modifier le rendez-vous
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const dateInput = document.getElementById('id_date');
+const slotSelect = document.getElementById('id_slot');
+const slotContainer = document.getElementById('slot-container');
+const loadingMessage = document.getElementById('loading-message');
+const errorMessage = document.getElementById('error-message');
+const submitBtn = document.getElementById('submit-btn');
+
+dateInput.addEventListener('change', function() {
+    const selectedDate = this.value;
+
+    if (!selectedDate) {
+        slotContainer.style.display = 'none';
+        submitBtn.disabled = true;
+        return;
+    }
+
+    // Afficher le message de chargement
+    loadingMessage.style.display = 'block';
+    errorMessage.style.display = 'none';
+    slotContainer.style.display = 'none';
+    submitBtn.disabled = true;
+
+    // Charger les créneaux disponibles via AJAX
+    fetch(`/appointments/api/available-slots/?date=${selectedDate}`)
+        .then(response => response.json())
+        .then(data => {
+            loadingMessage.style.display = 'none';
+
+            if (data.error) {
+                errorMessage.textContent = data.error;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (data.message) {
+                errorMessage.textContent = data.message;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (data.slots.length === 0) {
+                errorMessage.textContent = 'Aucun créneau disponible pour cette date.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Remplir le select avec les créneaux disponibles
+            slotSelect.innerHTML = '<option value="">-- Sélectionnez un créneau --</option>';
+            data.slots.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot.id;
+                option.textContent = slot.display;
+                slotSelect.appendChild(option);
+            });
+
+            slotContainer.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des créneaux:', error);
+            loadingMessage.style.display = 'none';
+            errorMessage.textContent = 'Une erreur est survenue lors du chargement des créneaux.';
+            errorMessage.style.display = 'block';
+        });
+});
+
+slotSelect.addEventListener('change', function() {
+    submitBtn.disabled = !this.value;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Garage Auto Premium{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+                <i class="fa-solid fa-car-side text-primary fa-lg"></i>
+                <span class="fw-bold text-dark">Garage<span class="text-primary">Plus</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                            href="{% url 'home' %}">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}#services">Services</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="nav-link dropdown-toggle btn btn-light px-3 rounded-pill position-relative" href="#"
+                            role="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-user-circle me-1"></i> {{ user.username }}
+                            <span id="notif-badge"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                                0
+                                <span class="visually-hidden">notifications</span>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 rounded-3 mt-2">
+                            <li><a class="dropdown-item rounded-2" href="{% url 'accounts:dashboard' %}"><i
+                                        class="fa-solid fa-gauge me-2"></i> Tableau de bord</a></li>
+                            {% if user.profile.role == 'CLIENT' %}
+                            <li><a class="dropdown-item rounded-2" href="{% url 'vehicles:vehicle_list' %}"><i
+                                        class="fa-solid fa-car me-2"></i> Mes Véhicules</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item rounded-2" href="{% url 'cases:case_list' %}"><i
+                                        class="fa-solid fa-folder-open me-2"></i> Mes Dossiers</a></li>
+                            <li><a class="dropdown-item rounded-2" href="{% url 'quotes:quote_list' %}"><i
+                                        class="fa-solid fa-file-invoice-dollar me-2"></i> Mes Devis</a></li>
+                            <li><a class="dropdown-item rounded-2" href="{% url 'appointments:appointment_list' %}"><i
+                                        class="fa-solid fa-calendar-check me-2"></i> {% if user.profile.role == 'CLIENT' %}Mes Rendez-vous{% else %}Tous les Rendez-vous{% endif %}</a></li>
+                            <li><a class="dropdown-item rounded-2" href="{% url 'billing:invoice_list' %}"><i
+                                        class="fa-solid fa-file-invoice me-2"></i> Mes Factures</a></li>
+                            <li><a class="dropdown-item rounded-2 d-flex justify-content-between align-items-center"
+                                    href="{% url 'notifications:notification_list' %}">
+                                    <span><i class="fa-solid fa-bell me-2"></i> Notifications</span>
+                                    <span id="dropdown-badge" class="badge bg-danger rounded-pill d-none">0</span>
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            {% if user.is_staff %}
+                            <li class="dropdown-header text-uppercase small fw-bold text-secondary">Espace Gestion</li>
+                            <li><a class="dropdown-item rounded-2 text-warning" href="{% url 'admin:index' %}"><i
+                                        class="fa-solid fa-shield-halved me-2"></i> Admin Django</a></li>
+                            {% endif %}
+                            <li>
+                                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item rounded-2 text-danger">
+                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-3">
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill px-4 me-2">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:register' %}"
+                            class="btn btn-primary rounded-pill px-4">Inscription</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="padding-top: 76px;">
+        <!-- Messages/Notifications -->
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="text-white mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-car-side text-primary"></i> GaragePlus
+                    </h5>
+                    <p class="small">L'excellence automobile à votre service. Réparations, entretien et diagnostic par
+                        des experts certifiés.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="text-white fw-bold mb-3">Liens</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a href="{% url 'home' %}">Accueil</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="{% url 'appointments:appointment_list' %}">Rendez-vous</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Contact</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><i class="fa-solid fa-location-dot me-2 text-primary"></i> 123 Rue de la Mécanique</li>
+                        <li><i class="fa-solid fa-phone me-2 text-primary"></i> 01 23 45 67 89</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-primary"></i> contact@garageplus.fr</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Horaires</h6>
+                    <p class="small mb-1"><span class="text-white">Lun - Ven:</span> 08:00 - 19:00</p>
+                    <p class="small"><span class="text-white">Sam:</span> 09:00 - 17:00</p>
+                </div>
+            </div>
+            <div class="row mt-5 pt-4 border-top border-secondary">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small mb-0">&copy; {% now "Y" %} GaragePlus. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="d-inline-flex gap-3">
+                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch("{% url 'notifications:get_unread_count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count > 0) {
+                        const badger = document.getElementById('notif-badge');
+                        const dropBadger = document.getElementById('dropdown-badge');
+                        if (badger) {
+                            badger.innerText = data.count;
+                            badger.classList.remove('d-none');
+                        }
+                        if (dropBadger) {
+                            dropBadger.innerText = data.count;
+                            dropBadger.classList.remove('d-none');
+                        }
+                    }
+                })
+                .catch(console.error);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

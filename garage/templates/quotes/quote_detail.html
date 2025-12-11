@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}Devis {{ quote.quote_number|default:"#"|add:quote.id|stringformat:"s" }} - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_list' %}">
+                    {% if is_client %}Mes Devis{% else %}Tous les Devis{% endif %}
+                </a></li>
+                <li class="breadcrumb-item active">
+                    Devis {{ quote.quote_number|default:"Brouillon" }}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-file-earmark-text text-primary"></i>
+            Devis {{ quote.quote_number|default:"(Brouillon)" }}
+        </h1>
+        <p class="text-muted">
+            Dossier <a href="{% url 'cases:case_detail' quote.case.pk %}">#{{ quote.case.id }}</a> - {{ quote.case.vehicle }}
+        </p>
+    </div>
+    <div class="col-auto">
+        {% if not is_client and quote.status == 'DRAFT' %}
+            <a href="{% url 'quotes:quote_edit_lines' quote.pk %}" class="btn btn-outline-primary">
+                <i class="bi bi-pencil"></i> Modifier les lignes
+            </a>
+            <a href="{% url 'quotes:quote_validate' quote.pk %}" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Valider et émettre
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Informations principales -->
+<div class="row">
+    <div class="col-md-8">
+        <!-- Statut du devis -->
+        <div class="card mb-4
+            {% if quote.status == 'DRAFT' %}border-secondary
+            {% elif quote.status == 'EMITTED' %}border-warning
+            {% elif quote.status == 'ACCEPTED' %}border-success
+            {% elif quote.status == 'REFUSED' %}border-danger
+            {% elif quote.status == 'EXPIRED' %}border-dark
+            {% endif %}">
+            <div class="card-header
+                {% if quote.status == 'DRAFT' %}bg-secondary text-white
+                {% elif quote.status == 'EMITTED' %}bg-warning
+                {% elif quote.status == 'ACCEPTED' %}bg-success text-white
+                {% elif quote.status == 'REFUSED' %}bg-danger text-white
+                {% elif quote.status == 'EXPIRED' %}bg-dark text-white
+                {% endif %}">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-flag"></i> Statut : {{ quote.get_status_display }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width: 30%;">Date de création</th>
+                        <td>{{ quote.created_at|date:"d/m/Y à H:i" }}</td>
+                    </tr>
+                    {% if quote.emission_date %}
+                    <tr>
+                        <th>Date d'émission</th>
+                        <td>{{ quote.emission_date|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date d'expiration</th>
+                        <td>
+                            {{ quote.expiry_date|date:"d/m/Y" }}
+                            {% if quote.is_expired %}
+                                <span class="badge bg-danger ms-2">Expiré</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th>Validité</th>
+                        <td>{{ quote.validity_days }} jours</td>
+                    </tr>
+                    {% endif %}
+                    {% if not is_client %}
+                    <tr>
+                        <th>Client</th>
+                        <td>{{ quote.case.client.get_full_name|default:quote.case.client.username }} ({{ quote.case.client.email }})</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <!-- Lignes du devis -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-ul"></i> Détail du devis
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if quote_lines %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end" style="width: 15%;">Quantité</th>
+                                    <th class="text-end" style="width: 15%;">Prix Unit. HT</th>
+                                    <th class="text-end" style="width: 15%;">Total HT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in quote_lines %}
+                                <tr>
+                                    <td>{{ line.description }}</td>
+                                    <td class="text-end">{{ line.quantity|floatformat:2 }}</td>
+                                    <td class="text-end">{{ line.unit_price_ht|floatformat:2 }} €</td>
+                                    <td class="text-end">
+                                        <strong>{{ line.total_ht|floatformat:2 }} €</strong>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end"><strong>Total HT</strong></td>
+                                    <td class="text-end"><strong>{{ quote.total_ht|floatformat:2 }} €</strong></td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end">
+                                        <strong>TVA ({{ quote.tva_rate }}%)</strong>
+                                    </td>
+                                    <td class="text-end"><strong>{{ quote.total_tva|floatformat:2 }} €</strong></td>
+                                </tr>
+                                <tr class="table-primary">
+                                    <td colspan="3" class="text-end">
+                                        <strong class="fs-5">Total TTC</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="fs-5">{{ quote.total_ttc|floatformat:2 }} €</strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> Aucune ligne dans ce devis.
+                        {% if not is_client and quote.status == 'DRAFT' %}
+                            <a href="{% url 'quotes:quote_edit_lines' quote.pk %}">Ajouter des lignes</a>
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Notes -->
+        {% if quote.notes %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-sticky"></i> Notes
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ quote.notes|linebreaks }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="col-md-4">
+        <!-- Dossier associé -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-folder"></i> Dossier associé
+                </h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Dossier :</strong> #{{ quote.case.id }}</p>
+                <p><strong>Véhicule :</strong> {{ quote.case.vehicle }}</p>
+                <p><strong>Statut :</strong> <span class="badge bg-info">{{ quote.case.get_status_display }}</span></p>
+                <a href="{% url 'cases:case_detail' quote.case.pk %}" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="bi bi-eye"></i> Voir le dossier
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions client -->
+        {% if is_client and quote.status == 'EMITTED' and not quote.is_expired %}
+        <div class="card border-warning mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Action requise
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Ce devis attend votre décision.</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'quotes:quote_accept' quote.pk %}" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Accepter le devis
+                    </a>
+                    <a href="{% url 'quotes:quote_refuse' quote.pk %}" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Refuser le devis
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Devis expiré -->
+        {% if quote.status == 'EMITTED' and quote.is_expired %}
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Devis expiré</strong><br>
+            Ce devis a expiré le {{ quote.expiry_date|date:"d/m/Y" }}.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'quotes:quote_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+    {% if not is_client %}
+        <a href="#" class="btn btn-outline-primary">
+            <i class="bi bi-printer"></i> Imprimer/PDF
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

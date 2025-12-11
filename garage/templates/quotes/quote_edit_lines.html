@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier les lignes - Devis {{ quote.quote_number|default:"Brouillon" }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_list' %}">Tous les Devis</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_detail' quote.pk %}">
+                    Devis {{ quote.quote_number|default:"Brouillon" }}
+                </a></li>
+                <li class="breadcrumb-item active">Modifier les lignes</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6">
+            <i class="bi bi-pencil-square text-primary"></i> Modifier les lignes du devis
+        </h1>
+        <p class="text-muted">Devis {{ quote.quote_number|default:"(Brouillon)" }} - Dossier #{{ quote.case.id }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-ul"></i> Lignes du devis
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate id="quote-lines-form">
+                    {% csrf_token %}
+
+                    {{ formset.management_form }}
+
+                    {% if formset.non_form_errors %}
+                        <div class="alert alert-danger">
+                            {{ formset.non_form_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="table-responsive">
+                        <table class="table" id="formset-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">Description <span class="text-danger">*</span></th>
+                                    <th style="width: 15%;">Quantité <span class="text-danger">*</span></th>
+                                    <th style="width: 15%;">Prix Unit. HT <span class="text-danger">*</span></th>
+                                    <th style="width: 15%;">Total HT</th>
+                                    <th style="width: 10%;">Suppr.</th>
+                                    <th style="width: 5%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form in formset %}
+                                <tr class="formset-row {% if form.instance.pk %}existing-row{% else %}new-row{% endif %}">
+                                    <td>
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                        {{ form.description }}
+                                        {% if form.description.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.description.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ form.quantity }}
+                                        {% if form.quantity.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.quantity.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ form.unit_price_ht }}
+                                        {% if form.unit_price_ht.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.unit_price_ht.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control total-ht" readonly value="0.00">
+                                    </td>
+                                    <td>
+                                        {{ form.DELETE }}
+                                    </td>
+                                    <td>
+                                        {% if not form.instance.pk %}
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-row">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="add-row">
+                                            <i class="bi bi-plus-circle"></i> Ajouter une ligne
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end"><strong>Total HT</strong></td>
+                                    <td colspan="3"><strong id="grand-total-ht">0.00 €</strong></td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end"><strong>TVA ({{ quote.tva_rate }}%)</strong></td>
+                                    <td colspan="3"><strong id="grand-total-tva">0.00 €</strong></td>
+                                </tr>
+                                <tr class="table-primary">
+                                    <td colspan="3" class="text-end"><strong class="fs-5">Total TTC</strong></td>
+                                    <td colspan="3"><strong class="fs-5" id="grand-total-ttc">0.00 €</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Astuce :</strong> Cochez la case "Supprimer" pour retirer une ligne existante. Les lignes vides ne seront pas enregistrées.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const tvaRate = {{ quote.tva_rate }};
+
+// Calcul automatique des totaux
+function calculateLineTotals() {
+    let grandTotalHT = 0;
+
+    document.querySelectorAll('.formset-row').forEach(row => {
+        const deleteCheckbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+        if (deleteCheckbox && deleteCheckbox.checked) {
+            row.style.opacity = '0.5';
+            return;
+        } else {
+            row.style.opacity = '1';
+        }
+
+        const quantityInput = row.querySelector('input[name$="-quantity"]');
+        const priceInput = row.querySelector('input[name$="-unit_price_ht"]');
+        const totalInput = row.querySelector('.total-ht');
+
+        if (quantityInput && priceInput && totalInput) {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = quantity * price;
+
+            totalInput.value = total.toFixed(2);
+            grandTotalHT += total;
+        }
+    });
+
+    const grandTotalTVA = grandTotalHT * (tvaRate / 100);
+    const grandTotalTTC = grandTotalHT + grandTotalTVA;
+
+    document.getElementById('grand-total-ht').textContent = grandTotalHT.toFixed(2) + ' €';
+    document.getElementById('grand-total-tva').textContent = grandTotalTVA.toFixed(2) + ' €';
+    document.getElementById('grand-total-ttc').textContent = grandTotalTTC.toFixed(2) + ' €';
+}
+
+// Ajouter une nouvelle ligne
+document.getElementById('add-row')?.addEventListener('click', function() {
+    const formsetTable = document.getElementById('formset-table').querySelector('tbody');
+    const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+    const newFormIdx = parseInt(totalForms.value);
+
+    // Template de nouvelle ligne (simplifié - à adapter selon vos besoins)
+    const newRow = document.createElement('tr');
+    newRow.className = 'formset-row new-row';
+    newRow.innerHTML = `
+        <td>
+            <input type="text" name="quoteline_set-${newFormIdx}-description" class="form-control" maxlength="255">
+            <input type="hidden" name="quoteline_set-${newFormIdx}-id" id="id_quoteline_set-${newFormIdx}-id">
+        </td>
+        <td>
+            <input type="number" name="quoteline_set-${newFormIdx}-quantity" step="0.01" class="form-control" value="1.00">
+        </td>
+        <td>
+            <input type="number" name="quoteline_set-${newFormIdx}-unit_price_ht" step="0.01" class="form-control" value="0.00">
+        </td>
+        <td>
+            <input type="text" class="form-control total-ht" readonly value="0.00">
+        </td>
+        <td>
+            <input type="checkbox" name="quoteline_set-${newFormIdx}-DELETE" class="form-check-input">
+        </td>
+        <td>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-row">
+                <i class="bi bi-x"></i>
+            </button>
+        </td>
+    `;
+
+    formsetTable.appendChild(newRow);
+    totalForms.value = newFormIdx + 1;
+
+    // Attacher les événements
+    attachRowEvents(newRow);
+    calculateLineTotals();
+});
+
+// Attacher les événements aux lignes
+function attachRowEvents(row) {
+    row.querySelectorAll('input[name$="-quantity"], input[name$="-unit_price_ht"]').forEach(input => {
+        input.addEventListener('input', calculateLineTotals);
+    });
+
+    const deleteCheckbox = row.querySelector('input[name$="-DELETE"]');
+    if (deleteCheckbox) {
+        deleteCheckbox.addEventListener('change', calculateLineTotals);
+    }
+
+    const removeBtn = row.querySelector('.remove-row');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            row.remove();
+            calculateLineTotals();
+        });
+    }
+}
+
+// Initialiser les événements sur les lignes existantes
+document.querySelectorAll('.formset-row').forEach(attachRowEvents);
+calculateLineTotals();
+</script>
+{% endblock %}

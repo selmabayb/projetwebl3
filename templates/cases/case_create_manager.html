@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouveau Dossier Client - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">
+                    <i class="fa-solid fa-folder-plus text-primary me-2"></i> {{ title }}
+                </h3>
+
+                <div class="alert alert-info small">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    Sélectionnez le véhicule du client pour créer le dossier. Le client sera automatiquement associé.
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Véhicule (Client - Marque Modèle -
+                            Plaque)</label>
+                        {{ form.vehicle }}
+                        {{ form.vehicle.errors }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Description du problème</label>
+                        {{ form.description }}
+                        {{ form.description.errors }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Niveau d'urgence</label>
+                        {{ form.urgency_level }}
+                        {{ form.urgency_level.errors }}
+                    </div>
+
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm">
+                            Créer le dossier
+                        </button>
+                        <a href="{% url 'cases:case_list' %}" class="btn btn-link text-secondary mt-2">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

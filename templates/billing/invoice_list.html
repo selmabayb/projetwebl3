@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if user.profile.role == 'CLIENT' %}Mes Factures{% else %}Toutes les Factures{% endif %} - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="fw-bold mb-0">{% if user.profile.role == 'CLIENT' %}Mes Factures{% else %}Toutes les Factures{% endif %}</h1>
+        <p class="text-secondary">{% if user.profile.role == 'CLIENT' %}Historique de vos paiements{% else %}Historique de toutes les factures{% endif %}</p>
+    </div>
+
+    {% if invoices %}
+    <div class="glass-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3">Numéro</th>
+                        <th class="py-3">Date</th>
+                        {% if user.profile.role != 'CLIENT' %}
+                        <th class="py-3">Client</th>
+                        {% endif %}
+                        <th class="py-3">Véhicule</th>
+                        <th class="py-3 text-end">Montant TTC</th>
+                        <th class="py-3 text-center">Statut</th>
+                        <th class="py-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-primary">{{ invoice.invoice_number }}</td>
+                        <td>{{ invoice.created_at|date:"d/m/Y" }}</td>
+                        {% if user.profile.role != 'CLIENT' %}
+                        <td>
+                            <div class="small fw-bold">{{ invoice.case.client.get_full_name|default:invoice.case.client.username }}</div>
+                            <div class="text-muted small">{{ invoice.case.client.email }}</div>
+                        </td>
+                        {% endif %}
+                        <td>
+                            <div class="small fw-bold">{{ invoice.case.vehicle.brand }} {{ invoice.case.vehicle.model }}
+                            </div>
+                            <div class="text-muted small">{{ invoice.case.vehicle.get_identifier }}</div>
+                        </td>
+                        <td class="text-end fw-bold">{{ invoice.total_ttc }} €</td>
+                        <td class="text-center">
+                            {% if invoice.is_paid %}
+                            <span class="badge bg-success rounded-pill status-badge">Payée</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark rounded-pill status-badge">En attente</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'billing:invoice_detail' invoice.pk %}"
+                                class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="fa-solid fa-eye"></i> Voir
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+            style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-file-invoice text-secondary fa-2x opacity-50"></i>
+        </div>
+        <h4>Aucune facture</h4>
+        <p class="text-secondary">Vous n'avez pas encore de facture éditée.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

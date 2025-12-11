@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Devis {{ quote.quote_number }} - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'quotes:quote_list' %}">Mes Devis</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ quote.quote_number }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card p-4 p-md-5 print-content">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold mb-1">DEVIS</h2>
+                        <h5 class="text-primary fw-bold">{{ quote.quote_number }}</h5>
+                        <p class="text-secondary small mb-0">Date d'émission : {{ quote.created_at|date:"d/m/Y" }}</p>
+                        <p class="text-secondary small mb-0">Expire le : {{ quote.expiration_date|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="fw-bold mb-0">GaragePlus</h4>
+                        <p class="small text-secondary mb-0">123 Rue de la Mécanique<br>75000 Paris</p>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="row mb-5">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h6 class="text-secondary text-uppercase fw-bold small">Client</h6>
+                        <p class="fw-bold mb-0">{{ quote.case.client.get_full_name|default:quote.case.client.username }}
+                        </p>
+                        <p class="small text-secondary">{{ quote.case.client.email }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6 class="text-secondary text-uppercase fw-bold small">Véhicule</h6>
+                        <p class="fw-bold mb-0">{{ quote.case.vehicle.brand }} {{ quote.case.vehicle.model }}</p>
+                        <p class="small text-secondary">{{ quote.case.vehicle.get_identifier }}</p>
+                    </div>
+                </div>
+
+                <!-- Lines Table -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-borderless">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="py-3 ps-3">Description</th>
+                                <th class="py-3 text-center">Qté/H</th>
+                                <th class="py-3 text-end">Prix Unitaire</th>
+                                <th class="py-3 text-end pe-3">Total HT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for line in quote_lines %}
+                            <tr class="border-bottom">
+                                <td class="ps-3 py-3">
+                                    <span class="fw-bold d-block">{{ line.description }}</span>
+                                    {% if line.line_type == 'LABOR' %}
+                                    <small class="text-secondary">Main d'œuvre</small>
+                                    {% else %}
+                                    <small class="text-secondary">Pièce détachée</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center py-3">
+                                    {% if line.line_type == 'LABOR' %}
+                                    {{ line.hours }}h
+                                    {% else %}
+                                    {{ line.quantity }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end py-3">
+                                    {% if line.line_type == 'LABOR' %}
+                                    {{ line.hourly_rate }} €/h
+                                    {% else %}
+                                    {{ line.unit_price_ht }} €
+                                    {% endif %}
+                                </td>
+                                <td class="text-end fw-bold py-3 pe-3">{{ line.total_ht }} €</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals -->
+                <div class="row justify-content-end mb-5">
+                    <div class="col-md-5 col-lg-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Total HT</span>
+                            <span class="fw-bold">{{ quote.total_amount_ht }} €</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                            <span class="text-secondary">TVA (20%)</span>
+                            <span>{{ quote.total_amount_vat }} €</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">Total TTC</span>
+                            <span class="fw-bold fs-3 text-primary">{{ quote.total_amount_ttc }} €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3 no-print">
+                    {% if user.profile.role == 'CLIENT' %}
+                    {% if status == 'EMITTED' %}
+                    <a href="{% url 'quotes:quote_accept' quote.pk %}"
+                        class="btn btn-success btn-lg rounded-pill px-5 shadow-sm">
+                        <i class="fa-solid fa-check me-2"></i> Accepter le devis
+                    </a>
+                    <a href="{% url 'quotes:quote_refuse' quote.pk %}"
+                        class="btn btn-outline-danger btn-lg rounded-pill px-5">
+                        Refuser
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <!-- Manager Actions -->
+                    {% if not quote.is_validated_by_manager %}
+                    <a href="{% url 'quotes:quote_edit_lines' quote.pk %}"
+                        class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                        <i class="fa-solid fa-edit me-2"></i> Modifier lignes
+                    </a>
+                    <a href="{% url 'quotes:quote_validate' quote.pk %}"
+                        class="btn btn-warning btn-lg rounded-pill px-4 shadow-sm text-dark">
+                        <i class="fa-solid fa-paper-plane me-2"></i> Valider et Émettre
+                    </a>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if status == 'ACCEPTED' %}
+                    <div class="alert alert-success w-100 text-center">
+                        <i class="fa-solid fa-check-circle me-2"></i> Devis accepté le {{ quote.acceptance_date|date:"d/m/Y" }}
+                    </div>
+                    {% elif status == 'REFUSED' %}
+                    <div class="alert alert-danger w-100 text-center">
+                        <i class="fa-solid fa-times-circle me-2"></i> Devis refusé
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="text-center mt-4 no-print">
+                    <button onclick="window.print()" class="btn btn-link text-secondary">
+                        <i class="fa-solid fa-print me-2"></i> Imprimer
+                    </button>
+                    <!-- <a href="{% url 'quotes:quote_download_pdf' quote.pk %}" class="btn btn-link text-secondary">
+                        <i class="fa-solid fa-file-pdf me-2"></i> Télécharger PDF
+                    </a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

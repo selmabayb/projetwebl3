@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Créer un devis - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'quotes:quote_list' %}">Tous les Devis</a></li>
+                <li class="breadcrumb-item active">Nouveau devis</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-plus"></i> Créer un nouveau devis
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if case %}
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Dossier associé :</strong> #{{ case.id }} - {{ case.vehicle }}<br>
+                        <strong>Client :</strong> {{ case.client.get_full_name|default:case.client.username }} ({{ case.client.email }})<br>
+                        <strong>Pannes sélectionnées :</strong> {{ case.faults.count }}
+                    </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if not case %}
+                    <div class="mb-3">
+                        <label for="{{ form.case.id_for_label }}" class="form-label">
+                            {{ form.case.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.case }}
+                        {% if form.case.errors %}
+                            <div class="invalid-feedback d-block">{{ form.case.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Sélectionnez le dossier pour lequel créer un devis.
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.validity_days.id_for_label }}" class="form-label">
+                            {{ form.validity_days.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.validity_days }}
+                        {% if form.validity_days.errors %}
+                            <div class="invalid-feedback d-block">{{ form.validity_days.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Nombre de jours pendant lesquels le devis sera valide après émission.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            {{ form.notes.label }}
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">{{ form.notes.errors.0 }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Notes internes ou informations complémentaires pour le client.
+                        </small>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-lightbulb"></i>
+                        <strong>Note :</strong> Le devis sera créé en mode brouillon. Les lignes seront générées automatiquement depuis les pannes du dossier. Vous pourrez les modifier avant validation et émission au client.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'quotes:quote_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Créer le devis
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

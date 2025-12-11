@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-0">Notifications</h1>
+            <p class="text-secondary">Restez informé de l'avancement</p>
+        </div>
+        {% if notifications %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="mark_all_read" class="btn btn-outline-secondary rounded-pill btn-sm">
+                <i class="fa-solid fa-check-double me-2"></i> Tout marquer comme lu
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+    <div class="glass-card p-0 overflow-hidden">
+        <div class="list-group list-group-flush">
+            {% for notif in notifications %}
+            <a href="{% url 'notifications:mark_read' notif.pk %}"
+                class="list-group-item list-group-item-action p-4 border-bottom {% if not inotif.is_read %}bg-light{% endif %}">
+                <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0 fw-bold {% if not notif.is_read %}text-primary{% endif %}">
+                        {% if notif.notification_type == 'SUCCESS' %}<i
+                            class="fa-solid fa-circle-check text-success me-2"></i>
+                        {% elif notif.notification_type == 'WARNING' %}<i
+                            class="fa-solid fa-triangle-exclamation text-warning me-2"></i>
+                        {% elif notif.notification_type == 'ERROR' %}<i
+                            class="fa-solid fa-circle-xmark text-danger me-2"></i>
+                        {% else %}<i class="fa-solid fa-circle-info text-primary me-2"></i>
+                        {% endif %}
+                        {{ notif.title }}
+                    </h5>
+                    <small class="text-muted">{{ notif.created_at|timesince }}</small>
+                </div>
+                <p class="mb-1 text-secondary">{{ notif.message }}</p>
+                {% if notif.related_case %}
+                <small class="text-primary mt-2 d-block">
+                    Voir le dossier #{{ notif.related_case.id }} <i class="fa-solid fa-arrow-right ms-1"></i>
+                </small>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+            style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-bell-slash text-secondary fa-2x opacity-50"></i>
+        </div>
+        <h4>Aucune notification</h4>
+        <p class="text-secondary">Vous êtes à jour.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

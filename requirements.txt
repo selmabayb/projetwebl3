@@ -1,0 +1,64 @@
+# =============================================================================
+# GARAGEPLUS - Dépendances Python
+# =============================================================================
+# Application Django de gestion de garage automobile
+# Python 3.13+ requis
+
+# Framework Core
+Django==6.0
+asgiref==3.11.0
+
+# Base de données (PostgreSQL pour production)
+# psycopg2-binary==2.9.10  # Décommenter pour PostgreSQL
+
+# Génération PDF (xhtml2pdf uniquement - compatible Windows)
+xhtml2pdf==0.2.17
+reportlab==4.4.6
+pillow==12.0.0
+
+# Support PDF avancé (requis par xhtml2pdf)
+pypdf==6.4.1
+arabic-reshaper==3.0.0
+python-bidi==0.6.7
+
+# Parser HTML/CSS (requis par xhtml2pdf)
+html5lib==1.1
+pyphen==0.17.2
+
+# Requêtes HTTP
+requests==2.32.5
+urllib3==2.6.1
+certifi==2025.11.12
+idna==3.11
+charset-normalizer==3.4.4
+
+# Parsing et traitement
+PyYAML==6.0.3
+sqlparse==0.5.4
+six==1.17.0
+
+# Gestion des fuseaux horaires
+tzdata==2025.2
+tzlocal==5.3.1
+
+# =============================================================================
+# Dépendances de développement (optionnel)
+# =============================================================================
+# Décommenter pour l'environnement de développement
+
+# Tests
+# pytest==8.3.5
+# pytest-django==4.10.0
+# pytest-cov==6.0.0
+
+# Qualité de code
+# flake8==8.0.0
+# black==25.1.0
+# isort==5.14.0
+
+# Debugging
+# django-debug-toolbar==5.0.0
+# ipython==8.34.0
+
+# Variables d'environnement
+# python-dotenv==1.0.1

@@ -1,0 +1,426 @@
+[
+  {
+    "model": "catalog.faultgroup",
+    "pk": 1,
+    "fields": {
+      "name": "Carrosserie",
+      "description": "Réparations liées à la carrosserie du véhicule",
+      "order": 1,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 2,
+    "fields": {
+      "name": "Pneus",
+      "description": "Remplacement et réparation de pneus",
+      "order": 2,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 3,
+    "fields": {
+      "name": "Pare-brise",
+      "description": "Réparation et remplacement de pare-brise",
+      "order": 3,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 4,
+    "fields": {
+      "name": "Moteur",
+      "description": "Réparations et entretien du moteur",
+      "order": 4,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 5,
+    "fields": {
+      "name": "Freinage",
+      "description": "Système de freinage",
+      "order": 5,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 6,
+    "fields": {
+      "name": "Électricité",
+      "description": "Système électrique et électronique",
+      "order": 6,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 7,
+    "fields": {
+      "name": "Vidange",
+      "description": "Vidange et changement de filtres",
+      "order": 7,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.faultgroup",
+    "pk": 8,
+    "fields": {
+      "name": "Climatisation",
+      "description": "Système de climatisation",
+      "order": 8,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 1,
+    "fields": {
+      "group": 1,
+      "name": "Rayure légère",
+      "description": "Rayure superficielle nécessitant un polissage",
+      "labor_hours": 1.0,
+      "parts_cost": 20.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 2,
+    "fields": {
+      "group": 1,
+      "name": "Bosselage",
+      "description": "Réparation de bosse sans peinture",
+      "labor_hours": 2.5,
+      "parts_cost": 50.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 3,
+    "fields": {
+      "group": 1,
+      "name": "Remplacement pare-chocs",
+      "description": "Remplacement complet du pare-chocs",
+      "labor_hours": 3.0,
+      "parts_cost": 350.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 4,
+    "fields": {
+      "group": 2,
+      "name": "Changement pneu (1 pneu)",
+      "description": "Remplacement d'un pneu usé",
+      "labor_hours": 0.5,
+      "parts_cost": 80.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 5,
+    "fields": {
+      "group": 2,
+      "name": "Équilibrage roues",
+      "description": "Équilibrage des 4 roues",
+      "labor_hours": 1.0,
+      "parts_cost": 10.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 6,
+    "fields": {
+      "group": 2,
+      "name": "Réparation crevaison",
+      "description": "Réparation d'un pneu crevé",
+      "labor_hours": 0.75,
+      "parts_cost": 15.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 7,
+    "fields": {
+      "group": 3,
+      "name": "Réparation impact",
+      "description": "Réparation d'un impact sur le pare-brise",
+      "labor_hours": 1.0,
+      "parts_cost": 50.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 8,
+    "fields": {
+      "group": 3,
+      "name": "Remplacement pare-brise",
+      "description": "Remplacement complet du pare-brise",
+      "labor_hours": 2.5,
+      "parts_cost": 450.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 9,
+    "fields": {
+      "group": 3,
+      "name": "Remplacement essuie-glaces",
+      "description": "Remplacement des balais d'essuie-glaces",
+      "labor_hours": 0.25,
+      "parts_cost": 30.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 10,
+    "fields": {
+      "group": 4,
+      "name": "Remplacement courroie distribution",
+      "description": "Changement de la courroie de distribution",
+      "labor_hours": 4.0,
+      "parts_cost": 250.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 11,
+    "fields": {
+      "group": 4,
+      "name": "Changement bougies",
+      "description": "Remplacement des bougies d'allumage",
+      "labor_hours": 1.5,
+      "parts_cost": 60.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 12,
+    "fields": {
+      "group": 4,
+      "name": "Réparation fuite huile",
+      "description": "Identification et réparation de fuite d'huile",
+      "labor_hours": 3.0,
+      "parts_cost": 100.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 13,
+    "fields": {
+      "group": 5,
+      "name": "Changement plaquettes frein",
+      "description": "Remplacement des plaquettes de frein avant",
+      "labor_hours": 1.5,
+      "parts_cost": 90.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 14,
+    "fields": {
+      "group": 5,
+      "name": "Changement disques frein",
+      "description": "Remplacement des disques de frein avant",
+      "labor_hours": 2.0,
+      "parts_cost": 150.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 15,
+    "fields": {
+      "group": 5,
+      "name": "Purge liquide frein",
+      "description": "Purge et remplacement du liquide de frein",
+      "labor_hours": 1.0,
+      "parts_cost": 25.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 16,
+    "fields": {
+      "group": 6,
+      "name": "Remplacement batterie",
+      "description": "Changement de la batterie",
+      "labor_hours": 0.5,
+      "parts_cost": 120.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 17,
+    "fields": {
+      "group": 6,
+      "name": "Remplacement alternateur",
+      "description": "Changement de l'alternateur",
+      "labor_hours": 2.5,
+      "parts_cost": 300.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 18,
+    "fields": {
+      "group": 6,
+      "name": "Diagnostic électronique",
+      "description": "Diagnostic complet via valise électronique",
+      "labor_hours": 1.0,
+      "parts_cost": 0.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 19,
+    "fields": {
+      "group": 7,
+      "name": "Vidange huile moteur",
+      "description": "Vidange complète avec changement de filtre",
+      "labor_hours": 0.75,
+      "parts_cost": 45.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 20,
+    "fields": {
+      "group": 7,
+      "name": "Changement filtre air",
+      "description": "Remplacement du filtre à air",
+      "labor_hours": 0.25,
+      "parts_cost": 20.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 21,
+    "fields": {
+      "group": 7,
+      "name": "Changement filtre habitacle",
+      "description": "Remplacement du filtre d'habitacle",
+      "labor_hours": 0.5,
+      "parts_cost": 25.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 22,
+    "fields": {
+      "group": 8,
+      "name": "Recharge climatisation",
+      "description": "Recharge du gaz de climatisation",
+      "labor_hours": 1.0,
+      "parts_cost": 80.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 23,
+    "fields": {
+      "group": 8,
+      "name": "Remplacement compresseur clim",
+      "description": "Changement du compresseur de climatisation",
+      "labor_hours": 3.5,
+      "parts_cost": 450.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.fault",
+    "pk": 24,
+    "fields": {
+      "group": 8,
+      "name": "Nettoyage circuit clim",
+      "description": "Nettoyage et désinfection du circuit de climatisation",
+      "labor_hours": 0.75,
+      "parts_cost": 35.00,
+      "is_active": true,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  }
+]

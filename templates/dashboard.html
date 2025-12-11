@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de Bord - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Welcome Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-0">Bonjour, {{ user.username }} !</h1>
+            <p class="text-secondary">Voici ce qui se passe avec votre garage.</p>
+        </div>
+        {% if user.profile.role == 'CLIENT' %}
+        <a href="{% url 'cases:case_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i>Nouveau Dossier
+        </a>
+        {% elif user.profile.role == 'GESTIONNAIRE' or user.profile.role == 'ADMIN' %}
+        <a href="{% url 'cases:case_create_manager' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i>Nouveau Dossier (Client)
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        {% if user.profile.role == 'CLIENT' %}
+        <div class="col-md-4">
+            <div class="glass-card p-4 d-flex align-items-center gap-3">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                    <i class="fa-solid fa-car fa-2x"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">{{ stats.vehicle_count }}</h2>
+                    <p class="text-secondary small mb-0">Véhicules Enregistrés</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <div class="glass-card p-4 d-flex align-items-center gap-3">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3">
+                    <i class="fa-solid fa-file-invoice fa-2x"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">{{ stats.pending_quote_count }}</h2>
+                    <p class="text-secondary small mb-0">Devis en Attente</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 d-flex align-items-center gap-3">
+                <div class="bg-success bg-opacity-10 text-success rounded-3 p-3">
+                    <i class="fa-solid fa-calendar-check fa-2x"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">{{ stats.upcoming_appointment_count }}</h2>
+                    <p class="text-secondary small mb-0">Rendez-vous à venir</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="row g-4">
+        <!-- Recent Activities / Notifications -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Activités Récentes</h5>
+                    <a href="#" class="text-primary small text-decoration-none">Tout voir</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    <!-- Item 1 (Mock) -->
+                    <div class="list-group-item px-4 py-3 border-light opacity-50 text-center py-5">
+                        <i class="fa-regular fa-folder-open fa-2x text-secondary mb-2"></i>
+                        <p class="text-secondary mb-0">Aucune activité récente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-gradient-primary text-white"
+                style="background: linear-gradient(135deg, #1e40af, #3b82f6);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Actions Rapides</h5>
+                    <div class="d-grid gap-3">
+                        {% if user.profile.role == 'CLIENT' %}
+                        <a href="{% url 'vehicles:vehicle_list' %}"
+                            class="btn btn-light text-primary fw-bold text-start">
+                            <i class="fa-solid fa-car me-2"></i> Mes Véhicules
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'quotes:quote_list' %}" class="btn btn-outline-light fw-bold text-start">
+                            <i class="fa-solid fa-file-contract me-2"></i> Mes Devis
+                        </a>
+                        <a href="{% url 'appointments:appointment_list' %}"
+                            class="btn btn-outline-light fw-bold text-start">
+                            <i class="fa-solid fa-calendar-days me-2"></i> {% if user.profile.role == 'CLIENT' %}Mes
+                            Rendez-vous{% else %}Tous les Rendez-vous{% endif %}
+                        </a>
+                        {% if user.profile.role == 'GESTIONNAIRE' or user.profile.role == 'ADMIN' %}
+                        <a href="{% url 'cases:case_list' %}" class="btn btn-outline-light fw-bold text-start">
+                            <i class="fa-solid fa-folder-open me-2"></i> Créer Devis (Via Dossier)
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

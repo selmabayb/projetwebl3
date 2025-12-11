@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Historique du véhicule {{ vehicle }}</h2>
+
+<ul>
+   {% for entry in history %}
+        <li>
+            <b>{{ entry.date|date:"d/m/Y H:i" }}</b> — {{ entry.action }}
+            <br>{{ entry.details }}
+        </li>
+   {% empty %}
+        <li>Aucun historique pour ce véhicule.</li>
+   {% endfor %}
+</ul>
+{% endblock %}

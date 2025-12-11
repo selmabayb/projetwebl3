@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Mes documents</h2>
+
+<h3>Mes devis</h3>
+<ul>
+{% for q in quotes %}
+    <li>
+        Devis #{{ q.id }} — Dossier #{{ q.case.id }} — {{ q.total_price }} €
+        |
+        <a href="{% url 'quote_detail' q.id %}">Voir</a>
+        |
+        <a href="{% url 'quote_pdf' q.id %}">PDF</a>
+    </li>
+{% empty %}
+    <p>Aucun devis pour le moment.</p>
+{% endfor %}
+</ul>
+
+<h3>Mes factures</h3>
+<ul>
+{% for f in invoices %}
+    <li>
+        Facture #{{ f.id }} — Dossier #{{ f.case.id }} — {{ f.total_price }} €
+        |
+        <a href="{% url 'invoice_detail' f.id %}">Voir</a>
+        |
+        <a href="{% url 'invoice_pdf' f.id %}">PDF</a>
+    </li>
+{% empty %}
+    <p>Aucune facture pour le moment.</p>
+{% endfor %}
+</ul>
+
+{% endblock %}

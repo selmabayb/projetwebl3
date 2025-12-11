@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Dossiers - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-folder text-primary"></i>
+            {% if is_client %}Mes Dossiers{% else %}Tous les Dossiers{% endif %}
+        </h1>
+        <p class="text-muted">Gérez vos dossiers de réparation</p>
+    </div>
+    {% if is_client %}
+    <div class="col-auto">
+        <a href="{% url 'cases:case_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nouveau dossier
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Search/Filter Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-search"></i> Rechercher</h5>
+        <form method="get" action="{% url 'cases:case_list' %}">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    {{ form.search }}
+                </div>
+                <div class="col-md-3">
+                    {{ form.status }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.urgency_level }}
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Cases List -->
+{% if cases %}
+    <div class="row">
+        {% for case in cases %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header
+                        {% if case.status == 'NOUVEAU' %}bg-info text-white
+                        {% elif case.status == 'DEVIS_EMIS' %}bg-warning
+                        {% elif case.status == 'DEVIS_ACCEPTE' %}bg-success text-white
+                        {% elif case.status == 'EN_COURS' %}bg-primary text-white
+                        {% elif case.status == 'PRET' %}bg-success text-white
+                        {% elif case.status == 'CLOTURE' %}bg-secondary text-white
+                        {% elif case.status == 'DEVIS_REFUSE' or case.status == 'EXPIRE' %}bg-danger text-white
+                        {% else %}bg-light{% endif %}">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-folder"></i> Dossier #{{ case.id }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">{{ case.vehicle }}</h6>
+                        <ul class="list-unstyled mb-3">
+                            <li><i class="bi bi-calendar"></i> <strong>Créé le:</strong> {{ case.created_at|date:"d/m/Y" }}</li>
+                            <li>
+                                <i class="bi bi-flag"></i> <strong>Statut:</strong>
+                                <span class="badge
+                                    {% if case.status == 'NOUVEAU' %}bg-info
+                                    {% elif case.status == 'DEVIS_EMIS' %}bg-warning text-dark
+                                    {% elif case.status == 'DEVIS_ACCEPTE' or case.status == 'RDV_CONFIRME' %}bg-success
+                                    {% elif case.status == 'EN_COURS' %}bg-primary
+                                    {% elif case.status == 'PRET' %}bg-success
+                                    {% elif case.status == 'CLOTURE' %}bg-secondary
+                                    {% elif case.status == 'DEVIS_REFUSE' or case.status == 'EXPIRE' %}bg-danger
+                                    {% endif %}">
+                                    {{ case.get_status_display }}
+                                </span>
+                            </li>
+                            <li>
+                                <i class="bi bi-exclamation-circle"></i> <strong>Urgence:</strong>
+                                {% if case.urgency_level == 'HAUTE' %}
+                                    <span class="badge bg-danger">Haute</span>
+                                {% elif case.urgency_level == 'NORMALE' %}
+                                    <span class="badge bg-warning text-dark">Normale</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Basse</span>
+                                {% endif %}
+                            </li>
+                            {% if not is_client %}
+                                <li><i class="bi bi-person"></i> <strong>Client:</strong> {{ case.client.get_full_name|default:case.client.username }}</li>
+                            {% endif %}
+                        </ul>
+                        <p class="card-text text-truncate" style="max-height: 3em;">
+                            {{ case.description }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'cases:case_detail' case.pk %}" class="btn btn-sm btn-outline-primary w-100">
+                            <i class="bi bi-eye"></i> Voir les détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        {% if request.GET %}
+            Aucun dossier ne correspond à votre recherche.
+            <a href="{% url 'cases:case_list' %}" class="alert-link">Réinitialiser les filtres</a>
+        {% else %}
+            Vous n'avez pas encore de dossier.
+            {% if is_client %}
+                <a href="{% url 'cases:case_create' %}" class="alert-link">Créer votre premier dossier</a>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

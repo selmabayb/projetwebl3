@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Devis - Garage{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-file-earmark-text text-primary"></i>
+            {% if is_client %}Mes Devis{% else %}Tous les Devis{% endif %}
+        </h1>
+        <p class="text-muted">Gestion des devis de réparation</p>
+    </div>
+    {% if not is_client %}
+    <div class="col-auto">
+        <a href="{% url 'cases:case_list' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Créer un devis depuis un dossier
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Statistiques rapides -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h3 class="text-primary">{{ stats.draft }}</h3>
+                <p class="text-muted mb-0">Brouillons</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h3 class="text-warning">{{ stats.emitted }}</h3>
+                <p class="text-muted mb-0">En attente</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h3 class="text-success">{{ stats.accepted }}</h3>
+                <p class="text-muted mb-0">Acceptés</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h3 class="text-danger">{{ stats.refused }}</h3>
+                <p class="text-muted mb-0">Refusés</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des devis -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-list"></i> Liste des devis ({{ quotes.count }})
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if quotes %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            {% if not is_client %}
+                            <th>Client</th>
+                            {% endif %}
+                            <th>Dossier</th>
+                            <th>Date émission</th>
+                            <th>Montant TTC</th>
+                            <th>Statut</th>
+                            <th>Validité</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for quote in quotes %}
+                        <tr>
+                            <td>
+                                <strong>{{ quote.quote_number|default:"-" }}</strong>
+                            </td>
+                            {% if not is_client %}
+                            <td>
+                                {{ quote.case.client.get_full_name|default:quote.case.client.username }}
+                            </td>
+                            {% endif %}
+                            <td>
+                                <a href="{% url 'cases:case_detail' quote.case.pk %}">
+                                    Dossier #{{ quote.case.id }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if quote.emission_date %}
+                                    {{ quote.emission_date|date:"d/m/Y" }}
+                                {% else %}
+                                    <em class="text-muted">Non émis</em>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ quote.total_ttc|floatformat:2 }} €</strong>
+                            </td>
+                            <td>
+                                {% if quote.status == 'DRAFT' %}
+                                    <span class="badge bg-secondary">Brouillon</span>
+                                {% elif quote.status == 'EMITTED' %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% elif quote.status == 'ACCEPTED' %}
+                                    <span class="badge bg-success">Accepté</span>
+                                {% elif quote.status == 'REFUSED' %}
+                                    <span class="badge bg-danger">Refusé</span>
+                                {% elif quote.status == 'EXPIRED' %}
+                                    <span class="badge bg-dark">Expiré</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if quote.status == 'EMITTED' %}
+                                    {% if quote.is_expired %}
+                                        <span class="text-danger">
+                                            <i class="bi bi-exclamation-triangle"></i> Expiré
+                                        </span>
+                                    {% else %}
+                                        <span class="text-success">
+                                            {{ quote.expiry_date|date:"d/m/Y" }}
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'quotes:quote_detail' quote.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Voir
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">Aucun devis trouvé.</p>
+                {% if not is_client %}
+                    <a href="{% url 'cases:case_list' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Créer un premier devis
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

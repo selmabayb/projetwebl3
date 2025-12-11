@@ -1,0 +1,14 @@
+[
+  {
+    "model": "catalog.systemsettings",
+    "pk": 1,
+    "fields": {
+      "hourly_rate": "60.00",
+      "vat_rate": "0.20",
+      "quote_validity_days": 15,
+      "appointment_cancel_hours": 24,
+      "quote_variation_threshold": "0.10",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  }
+]

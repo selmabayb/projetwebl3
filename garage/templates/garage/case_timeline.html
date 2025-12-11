@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Timeline du Dossier #{{ case.pk }}{% endblock %}
+
+{% block content %}
+<header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            ⏳ Suivi du Dossier #{{ case.pk }}
+        </h1>
+        <p class="mt-1 text-lg text-gray-500">
+            Véhicule : {{ case.vehicle.brand }} {{ case.vehicle.model }} ({{ case.vehicle.plate }})
+        </p>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+        
+        {# Bloc de Statut Principal (Colonne 1) #}
+        <div class="lg:col-span-1 mb-8 lg:mb-0">
+            <div class="sticky top-8 bg-white shadow-xl rounded-xl p-6 border-l-4 border-indigo-600">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Statut Actuel</h3>
+                <p class="text-3xl font-bold text-indigo-700">{{ case.get_status_display }}</p>
+                <p class="mt-2 text-sm text-gray-500">
+                    Dossier créé le {{ case.created_at|date:"d M Y" }}.
+                </p>
+                
+                <div class="mt-6 border-t border-gray-200 pt-4">
+                    {% if case.status == 'QUOTE_SENT' and case.quote.pk %}
+                        <a href="{% url 'quote_detail' case.quote.pk %}" class="block text-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-500 hover:bg-amber-600 transition duration-150">
+                            Voir/Accepter le Devis
+                        </a>
+                    {% elif case.status == 'QUOTE_ACCEPTED' %}
+                        <a href="{% url 'appointment_set' case.pk %}" class="block text-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
+                            Fixer un Rendez-vous
+                        </a>
+                    {% elif case.status == 'INVOICED' and case.invoice.pk %}
+                         <a href="{% url 'invoice_detail' case.invoice.pk %}" class="block text-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition duration-150">
+                            Voir la Facture
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Bloc de la Timeline (Colonnes 2 & 3) #}
+        <div class="lg:col-span-2">
+            <div class="flow-root">
+                <ul role="list" class="-mb-8">
+                    {% for log in logs %}
+                    <li>
+                        <div class="relative pb-8">
+                            {# Ligne de connexion (sauf pour le dernier élément) #}
+                            {% if not forloop.last %}
+                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                            {% endif %}
+                            
+                            <div class="relative flex space-x-3">
+                                
+                                {# Icône de statut #}
+                                <div>
+                                    <span class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center ring-8 ring-white">
+                                        <svg class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.839l-2.8 2.036a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.036a1 1 0 00-1.175 0l-2.8 2.036c-.785.57-1.84-.197-1.54-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.004 8.748c-.784-.599-.38-1.839.588-1.839h3.462a1 1 0 00.95-.69l1.07-3.292z" /></svg>
+                                    </span>
+                                </div>
+                                
+                                <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div>
+                                        <p class="text-lg text-gray-900 font-medium">
+                                            {{ log.get_status_display }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 mt-0.5">
+                                            {% if log.comment %}{{ log.comment }}{% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                        <time datetime="{{ log.timestamp|date:'c' }}">{{ log.timestamp|date:"d F Y à H:i" }}</time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

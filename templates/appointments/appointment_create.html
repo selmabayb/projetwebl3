@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Prendre Rendez-vous - GaragePlus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5">
+                <h3 class="fw-bold mb-4">
+                    <i class="fa-solid fa-calendar-plus text-primary me-2"></i> Réserver un créneau
+                </h3>
+                <p class="text-secondary mb-4">Choisissez une date et une heure pour votre intervention.</p>
+
+                <form method="post" id="appointmentForm">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <!-- Date Selection -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Date souhaitée</label>
+                        {{ form.date }}
+                        {{ form.date.errors }}
+                    </div>
+
+                    <!-- Slots Container (Populated via AJAX) -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">Créneaux disponibles</label>
+                        <div id="slotsContainer" class="d-flex flex-wrap gap-2">
+                            <p class="text-muted small fst-italic">Veuillez sélectionner une date ci-dessus.</p>
+                        </div>
+                        <!-- Hidden input for time -->
+                        <!-- Hidden field for slot ID (controlled by JS) -->
+                        <div class="d-none">
+                            {{ form.slot }}
+                        </div>
+                        {{ form.slot.errors }}
+                    </div>
+
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm" id="submitBtn" disabled>
+                            Confirmer le rendez-vous
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.querySelector('input[name="date"]'); // Assumes standard Django widget
+        const slotsContainer = document.getElementById('slotsContainer');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (dateInput) {
+            dateInput.classList.add('form-control');
+            dateInput.type = 'date'; // Force date type if widget didn't
+
+            dateInput.addEventListener('change', function () {
+                const date = this.value;
+                if (date) {
+                    fetchSlots(date);
+                }
+            });
+        }
+
+        // Hide standard time input if rendered by Django, we will control it via buttons
+        if (timeInput) {
+            timeInput.type = 'hidden';
+        }
+
+        function fetchSlots(date) {
+            slotsContainer.innerHTML = '<div class="spinner-border text-primary spinner-border-sm" role="status"></div> Chargement...';
+
+            fetch(`{% url 'appointments:get_available_slots' %}?date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    slotsContainer.innerHTML = '';
+
+                    if (data.error) {
+                        slotsContainer.innerHTML = `<div class="text-danger small">${data.error}</div>`;
+                        return;
+                    }
+
+                    if (data.message) {
+                        slotsContainer.innerHTML = `<div class="text-warning small">${data.message}</div>`;
+                        return;
+                    }
+
+                    if (data.slots.length === 0) {
+                        slotsContainer.innerHTML = `<div class="text-muted small">Aucun créneau disponible pour cette date.</div>`;
+                        return;
+                    }
+
+                    data.slots.forEach(slot => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-outline-primary btn-sm slot-btn mb-2';
+                        btn.innerText = slot.display;
+                        btn.dataset.time = slot.start_time; // e.g., "14:00"
+                        btn.dataset.id = slot.id;
+
+                        btn.addEventListener('click', function () {
+                            // Deselect all
+                            document.querySelectorAll('.slot-btn').forEach(b => {
+                                b.classList.remove('active', 'btn-primary');
+                                b.classList.add('btn-outline-primary');
+                            });
+                            // Select this
+                            this.classList.remove('btn-outline-primary');
+                            this.classList.add('active', 'btn-primary');
+
+                            // Set value to slot ID
+                            const slotInput = document.querySelector('select[name="slot"]');
+                            if (slotInput) {
+                                slotInput.value = this.dataset.id;
+                                // For select element, we might need to create an option if it doesn't exist? 
+                                // Actually, since we use standard form submission, the select expects the value.
+                                // But if the select is empty (queryset none/all but not rendered options), it might work if we just set value.
+                                // Better: Create a hidden input if not exists or rely on select having options.
+                                // Since we load via AJAX, the select is likely empty. 
+                                // Let's FORCE the select to have this option.
+                                let option = slotInput.querySelector(`option[value="${this.dataset.id}"]`);
+                                if (!option) {
+                                    option = document.createElement('option');
+                                    option.value = this.dataset.id;
+                                    slotInput.appendChild(option);
+                                }
+                                option.selected = true;
+                            }
+                            submitBtn.disabled = false;
+                        });
+
+                        slotsContainer.appendChild(btn);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    slotsContainer.innerHTML = '<div class="text-danger small">Erreur lors du chargement des créneaux.</div>';
+                });
+        }
+    });
+</script>
+{% endblock %}
