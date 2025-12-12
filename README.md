@@ -249,12 +249,17 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-7. **Charger les données de test (optionnel)**
+7. **Charger les paramètres système (REQUIS)**
+```bash
+python manage.py loaddata garage/catalog/fixtures/system_settings.json
+```
+
+8. **Charger les données de test (optionnel)**
 ```bash
 python generate_test_data.py
 ```
 
-8. **Lancer le serveur de développement**
+9. **Lancer le serveur de développement**
 ```bash
 python manage.py runserver
 ```
@@ -273,6 +278,7 @@ Puis réinstallez la base :
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+python manage.py loaddata garage/catalog/fixtures/system_settings.json  # REQUIS
 python generate_test_data.py  # Optionnel
 ```
 

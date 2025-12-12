@@ -108,3 +108,5 @@ populate_db.py
 
 # AI Assistant
 .claude/
+
+GUIDE_PREPARATION_PRESENTATION.md
