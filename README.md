@@ -241,6 +241,7 @@ TZ=Europe/Paris
 
 5. **Appliquer les migrations**
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
